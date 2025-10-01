@@ -25,7 +25,7 @@ DEFAULT_CONFIG = {
     },
     'output': {
         'default_theme': 'academic',
-        'default_format': 'html5',
+        'default_formats': ['html5'],  # Can specify multiple: ['html5', 'markdown']
         'default_components': [],
     },
 }
@@ -109,7 +109,7 @@ custom_text = ""
 
 [output]
 default_theme = "academic"
-default_format = "html5"
+default_formats = ["html5"]  # Can specify multiple: ["html5", "markdown", "epub"]
 default_components = ["reading-time", "back-to-top", "theme-toggle"]
 """
 

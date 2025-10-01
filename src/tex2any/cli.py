@@ -29,6 +29,7 @@ Examples:
   %(prog)s document.tex
   %(prog)s document.tex --theme academic
   %(prog)s paper.tex -f markdown
+  %(prog)s paper.tex -f html5,markdown,epub
   %(prog)s paper.tex --theme academic --components floating-toc,search
   %(prog)s paper.tex --theme dark --components reading-time,equation-numbers
   %(prog)s paper.tex --theme serif --components floating-toc,sidebar-right,citation-generator
@@ -54,9 +55,8 @@ System Dependencies:
 
     parser.add_argument(
         '-f', '--format',
-        default='html5',
-        choices=TexConverter.SUPPORTED_FORMATS.keys(),
-        help='Output format (default: html5)'
+        default=None,
+        help='Output format(s) - single or comma-separated (e.g., "html5" or "html5,markdown,epub"). Default: from config or html5'
     )
 
     parser.add_argument(
@@ -172,16 +172,43 @@ System Dependencies:
     if not components:
         components = None
 
+    # Parse formats (comma-separated)
+    if args.format:
+        formats = [f.strip() for f in args.format.split(',') if f.strip()]
+    else:
+        # Use config default_formats or fallback to html5
+        default_formats = config.get('output', 'default_formats', ['html5'])
+        formats = default_formats if isinstance(default_formats, list) else [default_formats]
+
+    # Validate all formats
+    for fmt in formats:
+        if fmt not in TexConverter.SUPPORTED_FORMATS:
+            print(f"Error: Unsupported format '{fmt}'", file=sys.stderr)
+            print(f"Supported formats: {', '.join(TexConverter.SUPPORTED_FORMATS.keys())}", file=sys.stderr)
+            return 1
+
     try:
         converter = TexConverter(args.input)
-        output_path = converter.convert(
-            args.format,
-            theme=theme,
-            components=components,
-            css=args.css,
-            no_default_css=args.no_default_css
-        )
-        print(f"Successfully converted to: {output_path}")
+        output_paths = []
+
+        # Convert to each format
+        for fmt in formats:
+            output_path = converter.convert(
+                fmt,
+                theme=theme,
+                components=components,
+                css=args.css,
+                no_default_css=args.no_default_css
+            )
+            output_paths.append(output_path)
+
+        # Print results
+        if len(output_paths) == 1:
+            print(f"Successfully converted to: {output_paths[0]}")
+        else:
+            print(f"Successfully converted to {len(output_paths)} formats:")
+            for path in output_paths:
+                print(f"  - {path}")
         return 0
 
     except Exception as e:
