@@ -1,0 +1,164 @@
+/* SEO Meta Component */
+/* Comprehensive SEO meta tags - injected in <head> */
+
+/* This component has no visible CSS as it only injects meta tags */
+/* However, we include a debug indicator that can be toggled */
+
+.tex2any-seo-debug {
+    position: fixed;
+    bottom: 20px;
+    right: 80px;
+    padding: 0.4rem 0.8rem;
+    background: var(--toggle-bg, rgba(76, 175, 80, 0.95));
+    border: 1px solid var(--toggle-border, #4caf50);
+    border-radius: 16px;
+    color: white;
+    font-size: 0.75rem;
+    font-family: monospace;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 998;
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tex2any-seo-debug.show {
+    display: flex;
+}
+
+.tex2any-seo-debug svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+}
+
+/* SEO validation indicator */
+.tex2any-seo-status {
+    position: fixed;
+    top: 120px;
+    right: 20px;
+    padding: 0.5rem 0.75rem;
+    background: var(--toggle-bg, rgba(255, 255, 255, 0.95));
+    border: 1px solid var(--toggle-border, #d0d0d0);
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 997;
+    display: none;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.tex2any-seo-status.show {
+    display: flex;
+    animation: fadeInSlide 0.3s ease-out;
+}
+
+.tex2any-seo-status-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+}
+
+.tex2any-seo-status-item .icon {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.tex2any-seo-status-item .icon.success {
+    background: #4caf50;
+}
+
+.tex2any-seo-status-item .icon.warning {
+    background: #ff9800;
+}
+
+.tex2any-seo-status-item .icon.error {
+    background: #f44336;
+}
+
+/* Toggle button for SEO panel */
+.tex2any-seo-toggle {
+    position: fixed;
+    top: 120px;
+    right: 20px;
+    width: 36px;
+    height: 36px;
+    background: var(--toggle-bg, rgba(255, 255, 255, 0.95));
+    border: 1px solid var(--toggle-border, #d0d0d0);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 996;
+    transition: all 0.2s;
+}
+
+.tex2any-seo-toggle:hover {
+    background: var(--link-color, #0066cc);
+    color: white;
+    border-color: var(--link-color, #0066cc);
+    transform: scale(1.05);
+}
+
+.tex2any-seo-toggle svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
+/* Animation */
+@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Dark mode */
+body[data-theme="dark"] .tex2any-seo-debug {
+    background: rgba(76, 175, 80, 0.9);
+}
+
+body[data-theme="dark"] .tex2any-seo-status {
+    background: var(--color-surface, rgba(42, 42, 42, 0.95));
+    border-color: var(--color-border, #404040);
+}
+
+body[data-theme="dark"] .tex2any-seo-toggle {
+    background: var(--color-surface, rgba(42, 42, 42, 0.95));
+    border-color: var(--color-border, #404040);
+    color: var(--color-text, #e4e4e4);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .tex2any-seo-debug {
+        display: none !important;
+    }
+
+    .tex2any-seo-toggle,
+    .tex2any-seo-status {
+        top: 70px;
+        right: 10px;
+    }
+
+    .tex2any-seo-status {
+        font-size: 0.7rem;
+    }
+}
+
+/* Accessibility */
+.tex2any-seo-toggle:focus-visible {
+    outline: 2px solid var(--link-color, #0066cc);
+    outline-offset: 2px;
+}

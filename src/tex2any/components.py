@@ -152,6 +152,54 @@ COMPONENTS: Dict[str, Component] = {
         requires_js=True,
         layout_position='footer'
     ),
+    'hugo-frontmatter': Component(
+        name='hugo-frontmatter',
+        description='Generate YAML front matter from LaTeX metadata for Hugo',
+        requires_js=True,
+        layout_position=None
+    ),
+    'hugo-shortcodes': Component(
+        name='hugo-shortcodes',
+        description='Wrap LaTeX elements in Hugo shortcode syntax',
+        requires_js=True,
+        layout_position=None
+    ),
+    'annotations': Component(
+        name='annotations',
+        description='Personal highlights and notes with localStorage',
+        requires_js=True,
+        layout_position=None
+    ),
+    'bookmark-progress': Component(
+        name='bookmark-progress',
+        description='Remember reading position with localStorage',
+        requires_js=True,
+        layout_position=None
+    ),
+    'collapsible-proofs': Component(
+        name='collapsible-proofs',
+        description='Toggle visibility of theorem proofs and derivations',
+        requires_js=True,
+        layout_position=None
+    ),
+    'cross-references': Component(
+        name='cross-references',
+        description='Enhanced equation/theorem/figure cross-references with previews',
+        requires_js=True,
+        layout_position=None
+    ),
+    'seo-meta': Component(
+        name='seo-meta',
+        description='Comprehensive SEO meta tags (Open Graph, Twitter Card, JSON-LD)',
+        requires_js=True,
+        layout_position=None
+    ),
+    'glossary-tooltips': Component(
+        name='glossary-tooltips',
+        description='Hover tooltips for technical terms with definitions',
+        requires_js=True,
+        layout_position=None
+    ),
 }
 
 

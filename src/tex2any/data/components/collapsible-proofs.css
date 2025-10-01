@@ -1,0 +1,312 @@
+/* Collapsible Proofs Component */
+/* Toggle visibility of theorem proofs and derivations */
+
+/* Proof container */
+.ltx_proof,
+.ltx_theorem .ltx_proof,
+.proof {
+    position: relative;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: var(--code-bg, #f8f8f8);
+    border-left: 3px solid var(--link-color, #0066cc);
+    border-radius: 4px;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    overflow: hidden;
+}
+
+/* Collapsed state */
+.ltx_proof.tex2any-collapsed,
+.proof.tex2any-collapsed {
+    max-height: 60px !important;
+    opacity: 0.6;
+}
+
+.ltx_proof.tex2any-collapsed .ltx_proof_content,
+.proof.tex2any-collapsed .proof-content {
+    display: none;
+}
+
+/* Toggle button */
+.tex2any-proof-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    background: var(--toggle-bg, rgba(255, 255, 255, 0.95));
+    border: 1px solid var(--toggle-border, #d0d0d0);
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    color: var(--text-color, #1a1a1a);
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 0.5rem;
+}
+
+.tex2any-proof-toggle:hover {
+    background: var(--link-color, #0066cc);
+    color: white;
+    border-color: var(--link-color, #0066cc);
+}
+
+.tex2any-proof-toggle svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+    transition: transform 0.3s ease;
+}
+
+.tex2any-proof-toggle.collapsed svg {
+    transform: rotate(-90deg);
+}
+
+/* Toolbar for expand/collapse all */
+.tex2any-proofs-toolbar {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    display: flex;
+    gap: 0.5rem;
+    z-index: 900;
+    background: var(--toggle-bg, rgba(255, 255, 255, 0.98));
+    padding: 0.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--toggle-border, #d0d0d0);
+}
+
+.tex2any-proofs-toolbar button {
+    padding: 0.5rem 1rem;
+    background: var(--toggle-bg, white);
+    border: 1px solid var(--toggle-border, #d0d0d0);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    color: var(--text-color, #1a1a1a);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tex2any-proofs-toolbar button:hover {
+    background: var(--link-color, #0066cc);
+    color: white;
+    border-color: var(--link-color, #0066cc);
+}
+
+.tex2any-proofs-toolbar button svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
+
+/* Proof counter in toolbar */
+.tex2any-proof-counter {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    color: var(--text-color-muted, #666);
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+/* Proof title enhancement */
+.ltx_proof .ltx_title,
+.proof .proof-title {
+    font-weight: 600;
+    color: var(--text-color, #1a1a1a);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Proof content wrapper */
+.ltx_proof_content,
+.proof-content {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Indicator for collapsed proofs */
+.tex2any-proof-preview {
+    font-size: 0.85rem;
+    color: var(--text-color-muted, #666);
+    font-style: italic;
+    margin-top: 0.5rem;
+}
+
+.tex2any-collapsed .tex2any-proof-preview {
+    display: block;
+}
+
+.tex2any-proof-preview {
+    display: none;
+}
+
+/* Keyboard shortcut hint */
+.tex2any-proofs-hint {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.5rem 1rem;
+    background: var(--toggle-bg, rgba(0, 0, 0, 0.8));
+    color: white;
+    font-size: 0.8rem;
+    font-family: monospace;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 998;
+    display: none;
+    animation: fadeInSlideUp 0.3s ease-out;
+}
+
+.tex2any-proofs-hint.show {
+    display: block;
+}
+
+.tex2any-proofs-hint kbd {
+    display: inline-block;
+    padding: 0.2rem 0.4rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    font-weight: bold;
+    margin: 0 0.2rem;
+}
+
+@keyframes fadeInSlideUp {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 10px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+/* Dark mode */
+body[data-theme="dark"] .ltx_proof,
+body[data-theme="dark"] .proof {
+    background: var(--color-surface, #2a2a2a);
+    border-left-color: var(--link-color, #42a5f5);
+}
+
+body[data-theme="dark"] .tex2any-proof-toggle {
+    background: var(--color-surface, rgba(42, 42, 42, 0.95));
+    border-color: var(--color-border, #404040);
+    color: var(--color-text, #e4e4e4);
+}
+
+body[data-theme="dark"] .tex2any-proof-toggle:hover {
+    background: var(--link-color, #42a5f5);
+    color: white;
+    border-color: var(--link-color, #42a5f5);
+}
+
+body[data-theme="dark"] .tex2any-proofs-toolbar {
+    background: var(--color-surface, rgba(42, 42, 42, 0.98));
+    border-color: var(--color-border, #404040);
+}
+
+body[data-theme="dark"] .tex2any-proofs-toolbar button {
+    background: var(--color-surface, #2a2a2a);
+    border-color: var(--color-border, #404040);
+    color: var(--color-text, #e4e4e4);
+}
+
+body[data-theme="dark"] .tex2any-proofs-toolbar button:hover {
+    background: var(--link-color, #42a5f5);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .tex2any-proofs-toolbar {
+        top: 60px;
+        right: 10px;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .tex2any-proofs-toolbar button {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    .tex2any-proof-counter {
+        display: none;
+    }
+
+    .ltx_proof,
+    .proof {
+        padding: 0.75rem;
+        margin: 1rem 0;
+    }
+
+    .tex2any-proofs-hint {
+        display: none !important;
+    }
+}
+
+/* Print styles - always show proofs when printing */
+@media print {
+    .ltx_proof,
+    .proof {
+        max-height: none !important;
+        opacity: 1 !important;
+        page-break-inside: avoid;
+    }
+
+    .ltx_proof.tex2any-collapsed .ltx_proof_content,
+    .proof.tex2any-collapsed .proof-content {
+        display: block !important;
+    }
+
+    .tex2any-proof-toggle,
+    .tex2any-proofs-toolbar,
+    .tex2any-proofs-hint {
+        display: none !important;
+    }
+}
+
+/* Accessibility */
+.tex2any-proof-toggle:focus-visible,
+.tex2any-proofs-toolbar button:focus-visible {
+    outline: 2px solid var(--link-color, #0066cc);
+    outline-offset: 2px;
+}
+
+/* Smooth transition for height changes */
+.ltx_proof,
+.proof {
+    will-change: max-height, opacity;
+}
+
+/* Special styling for theorem environments */
+.ltx_theorem,
+.ltx_lemma,
+.ltx_proposition,
+.ltx_corollary {
+    margin: 1.5rem 0;
+}
+
+.ltx_theorem .ltx_title,
+.ltx_lemma .ltx_title,
+.ltx_proposition .ltx_title,
+.ltx_corollary .ltx_title {
+    font-weight: 700;
+    color: var(--text-color, #1a1a1a);
+    margin-bottom: 0.5rem;
+}

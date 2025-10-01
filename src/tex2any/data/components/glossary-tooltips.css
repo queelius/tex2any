@@ -1,0 +1,346 @@
+/* Glossary Tooltips Component */
+/* Hover tooltips for technical terms with definitions */
+
+/* Glossary term styling */
+.tex2any-glossary-term {
+    position: relative;
+    border-bottom: 1px dotted var(--link-color, #0066cc);
+    cursor: help;
+    transition: all 0.2s;
+}
+
+.tex2any-glossary-term:hover {
+    color: var(--link-color, #0066cc);
+    border-bottom-style: solid;
+}
+
+/* Tooltip */
+.tex2any-glossary-tooltip {
+    position: absolute;
+    z-index: 10000;
+    background: var(--toggle-bg, rgba(0, 0, 0, 0.9));
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    line-height: 1.5;
+    max-width: 300px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+    white-space: normal;
+}
+
+.tex2any-glossary-tooltip.show {
+    opacity: 1;
+}
+
+.tex2any-glossary-tooltip::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 20px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid rgba(0, 0, 0, 0.9);
+}
+
+/* Glossary term type indicator */
+.tex2any-glossary-term::before {
+    content: '📖';
+    font-size: 0.7rem;
+    margin-right: 0.2rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.tex2any-glossary-term:hover::before {
+    opacity: 0.7;
+}
+
+/* Glossary panel (sidebar) */
+.tex2any-glossary-panel {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background: var(--toggle-bg, white);
+    border-left: 1px solid var(--toggle-border, #d0d0d0);
+    box-shadow: -4px 0 16px rgba(0, 0, 0, 0.1);
+    z-index: 10001;
+    transition: right 0.3s ease-out;
+    overflow-y: auto;
+}
+
+.tex2any-glossary-panel.show {
+    right: 0;
+}
+
+.tex2any-glossary-panel-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--toggle-border, #d0d0d0);
+    background: var(--header-bg, #f5f5f5);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.tex2any-glossary-panel-header h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.3rem;
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    color: var(--text-color, #1a1a1a);
+}
+
+.tex2any-glossary-search {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--toggle-border, #d0d0d0);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.tex2any-glossary-panel-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-color-muted, #666);
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.tex2any-glossary-panel-close:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.tex2any-glossary-panel-body {
+    padding: 1.5rem;
+}
+
+.tex2any-glossary-item {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--toggle-border, #e0e0e0);
+}
+
+.tex2any-glossary-item:last-child {
+    border-bottom: none;
+}
+
+.tex2any-glossary-item-term {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text-color, #1a1a1a);
+    margin-bottom: 0.5rem;
+}
+
+.tex2any-glossary-item-definition {
+    font-size: 0.9rem;
+    color: var(--text-color-muted, #666);
+    line-height: 1.6;
+}
+
+/* Toggle button for glossary panel */
+.tex2any-glossary-toggle {
+    position: fixed;
+    top: 160px;
+    right: 20px;
+    padding: 0.5rem 1rem;
+    background: var(--toggle-bg, rgba(156, 39, 176, 0.95));
+    border: 1px solid var(--toggle-border, #9c27b0);
+    border-radius: 20px;
+    color: white;
+    font-size: 0.85rem;
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 996;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tex2any-glossary-toggle:hover {
+    background: rgba(156, 39, 176, 1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    transform: translateY(-2px);
+}
+
+.tex2any-glossary-toggle svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
+
+.tex2any-glossary-toggle .count {
+    display: inline-block;
+    min-width: 20px;
+    height: 20px;
+    line-height: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 0 6px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Overlay when panel is open */
+.tex2any-glossary-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    display: none;
+}
+
+.tex2any-glossary-overlay.show {
+    display: block;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Glossary categories */
+.tex2any-glossary-category {
+    margin: 2rem 0 1rem 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--link-color, #0066cc);
+}
+
+/* Dark mode */
+body[data-theme="dark"] .tex2any-glossary-tooltip {
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--color-text, #1a1a1a);
+}
+
+body[data-theme="dark"] .tex2any-glossary-tooltip::before {
+    border-bottom-color: rgba(255, 255, 255, 0.95);
+}
+
+body[data-theme="dark"] .tex2any-glossary-panel {
+    background: var(--color-surface, #2a2a2a);
+    border-left-color: var(--color-border, #404040);
+}
+
+body[data-theme="dark"] .tex2any-glossary-panel-header {
+    background: var(--color-surface, #1f1f1f);
+    border-bottom-color: var(--color-border, #404040);
+}
+
+body[data-theme="dark"] .tex2any-glossary-panel-header h3 {
+    color: var(--color-text, #e4e4e4);
+}
+
+body[data-theme="dark"] .tex2any-glossary-search {
+    background: var(--color-surface, #1f1f1f);
+    border-color: var(--color-border, #404040);
+    color: var(--color-text, #e4e4e4);
+}
+
+body[data-theme="dark"] .tex2any-glossary-item {
+    border-bottom-color: var(--color-border, #404040);
+}
+
+body[data-theme="dark"] .tex2any-glossary-item-term {
+    color: var(--color-text, #e4e4e4);
+}
+
+body[data-theme="dark"] .tex2any-glossary-item-definition {
+    color: var(--color-text-muted, #999);
+}
+
+body[data-theme="dark"] .tex2any-glossary-toggle {
+    background: rgba(156, 39, 176, 0.9);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .tex2any-glossary-panel {
+        width: 100%;
+        right: -100%;
+    }
+
+    .tex2any-glossary-toggle {
+        top: 140px;
+        right: 10px;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    .tex2any-glossary-tooltip {
+        max-width: calc(100vw - 40px);
+    }
+}
+
+/* Accessibility */
+.tex2any-glossary-toggle:focus-visible,
+.tex2any-glossary-panel-close:focus-visible,
+.tex2any-glossary-search:focus-visible {
+    outline: 2px solid var(--link-color, #0066cc);
+    outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+    .tex2any-glossary-toggle,
+    .tex2any-glossary-panel,
+    .tex2any-glossary-overlay {
+        display: none !important;
+    }
+
+    .tex2any-glossary-term {
+        border-bottom: none;
+    }
+}
+
+/* Empty state */
+.tex2any-glossary-empty {
+    padding: 2rem;
+    text-align: center;
+    color: var(--text-color-muted, #999);
+    font-size: 0.9rem;
+}
+
+/* Loading state */
+.tex2any-glossary-loading {
+    padding: 2rem;
+    text-align: center;
+    color: var(--text-color-muted, #999);
+    font-size: 0.9rem;
+}
+
+.tex2any-glossary-loading::after {
+    content: '...';
+    animation: ellipsis 1.5s infinite;
+}
+
+@keyframes ellipsis {
+    0%, 20% { content: '.'; }
+    40% { content: '..'; }
+    60%, 100% { content: '...'; }
+}

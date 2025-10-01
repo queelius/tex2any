@@ -1,0 +1,299 @@
+/* Bookmark Progress Component */
+/* Remembers reading position with localStorage */
+
+/* Resume reading toast */
+.tex2any-resume-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 1rem 1.5rem;
+    background: var(--toggle-bg, rgba(33, 150, 243, 0.98));
+    border: 1px solid var(--toggle-border, #2196f3);
+    border-radius: 12px;
+    color: white;
+    font-size: 0.9rem;
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    display: none;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-width: 300px;
+    animation: slideInRight 0.4s ease-out;
+}
+
+.tex2any-resume-toast.show {
+    display: flex;
+}
+
+.tex2any-resume-toast-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+}
+
+.tex2any-resume-toast-header svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+.tex2any-resume-toast-body {
+    font-size: 0.85rem;
+    opacity: 0.95;
+    line-height: 1.4;
+}
+
+.tex2any-resume-toast-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.tex2any-resume-btn {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    background: white;
+    color: #2196f3;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.tex2any-resume-btn:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-1px);
+}
+
+.tex2any-dismiss-btn {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.tex2any-dismiss-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Progress indicator in corner */
+.tex2any-reading-progress-indicator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--toggle-bg, rgba(255, 255, 255, 0.95));
+    border: 2px solid var(--toggle-border, #d0d0d0);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: var(--text-color, #1a1a1a);
+    z-index: 999;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tex2any-reading-progress-indicator:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.tex2any-reading-progress-indicator .percentage {
+    font-size: 1.1rem;
+    line-height: 1;
+    margin-bottom: 2px;
+}
+
+.tex2any-reading-progress-indicator .label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.7;
+}
+
+/* Circular progress ring */
+.tex2any-progress-ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.tex2any-progress-ring-circle {
+    fill: none;
+    stroke: var(--link-color, #2196f3);
+    stroke-width: 4;
+    stroke-dasharray: 157;
+    stroke-dashoffset: 157;
+    transition: stroke-dashoffset 0.3s ease;
+}
+
+/* Bookmark saved notification */
+.tex2any-bookmark-saved {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    padding: 0.5rem 1rem;
+    background: var(--toggle-bg, rgba(76, 175, 80, 0.95));
+    border: 1px solid var(--toggle-border, #4caf50);
+    border-radius: 20px;
+    color: white;
+    font-size: 0.85rem;
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 998;
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    animation: fadeInSlideUp 0.3s ease-out;
+}
+
+.tex2any-bookmark-saved.show {
+    display: flex;
+}
+
+.tex2any-bookmark-saved svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
+
+/* Animations */
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+/* Dark mode */
+body[data-theme="dark"] .tex2any-resume-toast {
+    background: rgba(33, 150, 243, 0.95);
+}
+
+body[data-theme="dark"] .tex2any-reading-progress-indicator {
+    background: var(--color-surface, rgba(42, 42, 42, 0.95));
+    border-color: var(--color-border, #404040);
+    color: var(--color-text, #e4e4e4);
+}
+
+body[data-theme="dark"] .tex2any-progress-ring-circle {
+    stroke: var(--link-color, #42a5f5);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .tex2any-resume-toast {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        min-width: auto;
+        max-width: calc(100% - 20px);
+    }
+
+    .tex2any-reading-progress-indicator {
+        bottom: 10px;
+        right: 10px;
+        width: 50px;
+        height: 50px;
+    }
+
+    .tex2any-reading-progress-indicator .percentage {
+        font-size: 0.9rem;
+    }
+
+    .tex2any-reading-progress-indicator .label {
+        font-size: 0.55rem;
+    }
+
+    .tex2any-bookmark-saved {
+        bottom: 70px;
+        right: 10px;
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+}
+
+/* Accessibility */
+.tex2any-resume-btn:focus-visible,
+.tex2any-dismiss-btn:focus-visible,
+.tex2any-reading-progress-indicator:focus-visible {
+    outline: 2px solid var(--link-color, #0066cc);
+    outline-offset: 2px;
+}
+
+/* Section marker in viewport */
+.tex2any-current-section-marker {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.5rem 1.5rem;
+    background: var(--toggle-bg, rgba(0, 0, 0, 0.7));
+    color: white;
+    font-size: 0.85rem;
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 997;
+    display: none;
+    max-width: 80%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tex2any-current-section-marker.show {
+    display: block;
+    animation: slideInDown 0.3s ease-out;
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -20px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}

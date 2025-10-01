@@ -1,0 +1,333 @@
+/* Cross References Component */
+/* Enhanced equation/theorem/figure cross-references with previews */
+
+/* Reference links styling */
+a.ltx_ref,
+a[href^="#"],
+.tex2any-ref {
+    position: relative;
+    color: var(--link-color, #0066cc);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--link-color, #0066cc);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+a.ltx_ref:hover,
+a[href^="#"]:hover,
+.tex2any-ref:hover {
+    color: var(--link-color-hover, #0052a3);
+    border-bottom-style: solid;
+}
+
+/* Preview popup */
+.tex2any-ref-preview {
+    position: absolute;
+    z-index: 10000;
+    background: var(--toggle-bg, white);
+    border: 1px solid var(--toggle-border, #d0d0d0);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    max-width: 400px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    display: none;
+    animation: fadeInScale 0.2s ease-out;
+}
+
+.tex2any-ref-preview.show {
+    display: block;
+}
+
+.tex2any-ref-preview-header {
+    font-weight: 600;
+    color: var(--text-color, #1a1a1a);
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--toggle-border, #d0d0d0);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tex2any-ref-preview-content {
+    color: var(--text-color, #1a1a1a);
+    overflow: hidden;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.tex2any-ref-preview-content img {
+    max-width: 100%;
+    height: auto;
+}
+
+.tex2any-ref-preview-content .ltx_equation,
+.tex2any-ref-preview-content .ltx_Math {
+    margin: 0.5rem 0;
+}
+
+/* Arrow pointing to reference */
+.tex2any-ref-preview::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 20px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid var(--toggle-border, #d0d0d0);
+}
+
+.tex2any-ref-preview::after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 21px;
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid var(--toggle-bg, white);
+}
+
+/* Highlighted target element */
+.tex2any-ref-target-highlight {
+    animation: glowPulse 2s ease-out;
+    scroll-margin-top: 100px;
+}
+
+@keyframes glowPulse {
+    0%, 100% {
+        background-color: transparent;
+        box-shadow: none;
+    }
+    50% {
+        background-color: rgba(255, 235, 59, 0.3);
+        box-shadow: 0 0 20px rgba(255, 235, 59, 0.5);
+    }
+}
+
+/* Back navigation button */
+.tex2any-ref-back-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.75rem 1.5rem;
+    background: var(--toggle-bg, rgba(0, 0, 0, 0.85));
+    color: white;
+    border: none;
+    border-radius: 24px;
+    font-size: 0.9rem;
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    z-index: 999;
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+    animation: slideInUp 0.3s ease-out;
+}
+
+.tex2any-ref-back-btn.show {
+    display: flex;
+}
+
+.tex2any-ref-back-btn:hover {
+    background: rgba(0, 0, 0, 0.95);
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.tex2any-ref-back-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
+.tex2any-ref-back-btn kbd {
+    display: inline-block;
+    padding: 0.2rem 0.4rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-family: monospace;
+    margin-left: 0.5rem;
+}
+
+/* Reference navigation history indicator */
+.tex2any-ref-history {
+    position: fixed;
+    top: 100px;
+    left: 20px;
+    padding: 0.5rem 0.75rem;
+    background: var(--toggle-bg, rgba(255, 255, 255, 0.95));
+    border: 1px solid var(--toggle-border, #d0d0d0);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: var(--text-color-muted, #666);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 998;
+    display: none;
+}
+
+.tex2any-ref-history.show {
+    display: block;
+    animation: fadeInSlide 0.3s ease-out;
+}
+
+/* Click indicator for references */
+.tex2any-ref-clicked {
+    animation: clickPulse 0.3s ease-out;
+}
+
+@keyframes clickPulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+        color: var(--link-color-hover, #0052a3);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Animations */
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 20px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Dark mode */
+body[data-theme="dark"] .tex2any-ref-preview {
+    background: var(--color-surface, #2a2a2a);
+    border-color: var(--color-border, #404040);
+}
+
+body[data-theme="dark"] .tex2any-ref-preview::before {
+    border-bottom-color: var(--color-border, #404040);
+}
+
+body[data-theme="dark"] .tex2any-ref-preview::after {
+    border-bottom-color: var(--color-surface, #2a2a2a);
+}
+
+body[data-theme="dark"] .tex2any-ref-preview-header {
+    color: var(--color-text, #e4e4e4);
+    border-bottom-color: var(--color-border, #404040);
+}
+
+body[data-theme="dark"] .tex2any-ref-preview-content {
+    color: var(--color-text, #e4e4e4);
+}
+
+body[data-theme="dark"] .tex2any-ref-back-btn {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+}
+
+body[data-theme="dark"] .tex2any-ref-back-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+body[data-theme="dark"] .tex2any-ref-history {
+    background: var(--color-surface, rgba(42, 42, 42, 0.95));
+    border-color: var(--color-border, #404040);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .tex2any-ref-preview {
+        max-width: calc(100vw - 40px);
+        left: 20px !important;
+        right: 20px;
+    }
+
+    .tex2any-ref-back-btn {
+        bottom: 10px;
+        padding: 0.6rem 1.2rem;
+        font-size: 0.85rem;
+    }
+
+    .tex2any-ref-back-btn kbd {
+        display: none;
+    }
+
+    .tex2any-ref-history {
+        top: 70px;
+        left: 10px;
+        font-size: 0.75rem;
+    }
+}
+
+/* Accessibility */
+a.ltx_ref:focus-visible,
+a[href^="#"]:focus-visible,
+.tex2any-ref:focus-visible,
+.tex2any-ref-back-btn:focus-visible {
+    outline: 2px solid var(--link-color, #0066cc);
+    outline-offset: 2px;
+}
+
+/* Special styling for different reference types */
+a.ltx_ref[href*="eq"]::before,
+a[href*="equation"]::before {
+    content: '⚛';
+    margin-right: 0.2rem;
+    opacity: 0.7;
+}
+
+a.ltx_ref[href*="fig"]::before,
+a[href*="figure"]::before {
+    content: '🖼';
+    margin-right: 0.2rem;
+    opacity: 0.7;
+}
+
+a.ltx_ref[href*="tab"]::before,
+a[href*="table"]::before {
+    content: '📊';
+    margin-right: 0.2rem;
+    opacity: 0.7;
+}
+
+a.ltx_ref[href*="thm"]::before,
+a.ltx_ref[href*="theorem"]::before {
+    content: '🔷';
+    margin-right: 0.2rem;
+    opacity: 0.7;
+}

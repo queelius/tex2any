@@ -1,0 +1,118 @@
+/* Hugo Front Matter Component */
+/* Generates YAML front matter from LaTeX metadata */
+
+/* Hidden container for front matter (it's injected as HTML comment) */
+.tex2any-hugo-frontmatter {
+    display: none;
+    visibility: hidden;
+}
+
+/* Visual indicator when front matter is generated (optional) */
+.tex2any-frontmatter-indicator {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    padding: 0.5rem 1rem;
+    background: var(--toggle-bg, rgba(76, 175, 80, 0.95));
+    border: 1px solid var(--toggle-border, #4caf50);
+    border-radius: 20px;
+    color: white;
+    font-size: 0.85rem;
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    animation: fadeInSlideUp 0.4s ease-out;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.tex2any-frontmatter-indicator.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.tex2any-frontmatter-indicator svg {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+    fill: currentColor;
+}
+
+/* Animation */
+@keyframes fadeInSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Dark mode */
+body[data-theme="dark"] .tex2any-frontmatter-indicator {
+    background: rgba(76, 175, 80, 0.9);
+    border-color: #66bb6a;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .tex2any-frontmatter-indicator {
+        bottom: 10px;
+        left: 10px;
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+}
+
+/* Button to copy frontmatter */
+.tex2any-copy-frontmatter-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    padding: 0.5rem 1rem;
+    background: var(--toggle-bg, rgba(33, 150, 243, 0.95));
+    border: 1px solid var(--toggle-border, #2196f3);
+    border-radius: 20px;
+    color: white;
+    font-size: 0.85rem;
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 999;
+    transition: all 0.2s ease;
+}
+
+.tex2any-copy-frontmatter-btn:hover {
+    background: rgba(33, 150, 243, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    transform: translateY(-2px);
+}
+
+.tex2any-copy-frontmatter-btn:active {
+    transform: translateY(0);
+}
+
+.tex2any-copy-frontmatter-btn svg {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+    fill: currentColor;
+}
+
+/* Dark mode */
+body[data-theme="dark"] .tex2any-copy-frontmatter-btn {
+    background: rgba(33, 150, 243, 0.9);
+    border-color: #42a5f5;
+}
+
+/* Accessibility */
+.tex2any-copy-frontmatter-btn:focus-visible {
+    outline: 2px solid var(--link-color, #0066cc);
+    outline-offset: 2px;
+}
