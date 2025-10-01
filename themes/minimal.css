@@ -1,0 +1,195 @@
+/* Minimal Theme - Ultra-clean, distraction-free reading */
+
+:root {
+    --font-body: system-ui, -apple-system, sans-serif;
+    --font-mono: 'SF Mono', Monaco, Consolas, monospace;
+    --color-text: #2c2c2c;
+    --color-text-muted: #777;
+    --color-bg: #ffffff;
+    --color-accent: #000;
+    --max-width: 65ch;
+}
+
+[data-theme="dark"] {
+    --color-text: #e0e0e0;
+    --color-text-muted: #999;
+    --color-bg: #1a1a1a;
+    --color-accent: #fff;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+    max-width: var(--max-width);
+    margin: 4rem auto;
+    padding: 0 1.5rem;
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 1.7;
+    color: var(--color-text);
+    background: var(--color-bg);
+    transition: all 0.3s;
+}
+
+.ltx_document { margin: 0; }
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 2.5rem 0 1rem;
+}
+
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; margin-top: 3rem; border-bottom: 1px solid currentColor; padding-bottom: 0.5rem; }
+h3 { font-size: 1.25rem; }
+
+.ltx_title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 1rem 0 0.5rem;
+}
+
+.ltx_authors {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+    color: var(--color-text-muted);
+}
+
+.ltx_date {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    margin-bottom: 3rem;
+}
+
+.ltx_abstract {
+    margin: 3rem 0;
+    padding-left: 2rem;
+    border-left: 2px solid var(--color-accent);
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+}
+
+a:hover {
+    text-decoration-thickness: 2px;
+}
+
+p { margin: 1rem 0; }
+
+.ltx_equation {
+    margin: 1.5rem 0;
+    overflow-x: auto;
+}
+
+.ltx_eqn_number {
+    float: right;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+
+.ltx_theorem, .ltx_proof {
+    margin: 2rem 0;
+    padding-left: 1.5rem;
+    border-left: 2px solid var(--color-text-muted);
+}
+
+.ltx_theorem .ltx_title,
+.ltx_proof .ltx_title {
+    font-weight: 600;
+    font-style: italic;
+    margin-bottom: 0.5rem;
+}
+
+figure, .ltx_figure {
+    margin: 2rem 0;
+    text-align: center;
+}
+
+figcaption, .ltx_caption {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+
+table {
+    border-collapse: collapse;
+    margin: 2rem auto;
+    font-size: 0.95rem;
+}
+
+th, td {
+    padding: 0.5rem 1rem;
+    text-align: left;
+}
+
+th {
+    border-bottom: 2px solid var(--color-accent);
+    font-weight: 600;
+}
+
+td {
+    border-bottom: 1px solid var(--color-text-muted);
+}
+
+code, .ltx_verbatim {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+}
+
+pre, .ltx_lstlisting {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    line-height: 1.5;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    border-left: 2px solid var(--color-text-muted);
+}
+
+.ltx_TOC {
+    margin: 2rem 0;
+    padding: 1rem 0;
+}
+
+.ltx_TOC ul {
+    list-style: none;
+    padding: 0;
+}
+
+.ltx_TOC li {
+    margin: 0.5rem 0;
+}
+
+.ltx_TOC li li {
+    padding-left: 1.5rem;
+}
+
+.ltx_bibliography {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid currentColor;
+}
+
+.ltx_bibitem {
+    margin-bottom: 1rem;
+}
+
+.ltx_bib_author {
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    body {
+        font-size: 16px;
+        margin: 2rem auto;
+    }
+    .ltx_title { font-size: 2rem; }
+}

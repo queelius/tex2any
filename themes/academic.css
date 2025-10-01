@@ -1,0 +1,372 @@
+/* Academic Theme - Clean, professional, research-focused design */
+
+:root {
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
+    --font-heading: 'Inter', -apple-system, system-ui, sans-serif;
+    --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', 'Roboto Mono', 'Consolas', monospace;
+
+    --color-text: #1a1a1a;
+    --color-text-muted: #666666;
+    --color-bg: #ffffff;
+    --color-surface: #f8f9fa;
+    --color-border: #e1e4e8;
+    --color-accent: #0366d6;
+    --color-accent-hover: #0256c7;
+    --color-code-bg: #f6f8fa;
+    --color-code-text: #24292e;
+    --color-code-keyword: #d73a49;
+
+    --max-width: 75ch;
+    --spacing-unit: 1rem;
+    --line-height: 1.65;
+    --heading-line-height: 1.3;
+}
+
+/* Dark mode support via data attribute (for toggle component) */
+[data-theme="dark"] {
+    --color-text: #e6edf3;
+    --color-text-muted: #8b949e;
+    --color-bg: #0d1117;
+    --color-surface: #161b22;
+    --color-border: #30363d;
+    --color-accent: #58a6ff;
+    --color-accent-hover: #79c0ff;
+    --color-code-bg: #161b22;
+    --color-code-text: #e6edf3;
+    --color-code-keyword: #ff7b72;
+}
+
+/* Reset and base styles */
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    max-width: var(--max-width);
+    margin: 3rem auto;
+    padding: 0 2rem;
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: var(--line-height);
+    color: var(--color-text);
+    background: var(--color-bg);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.ltx_document {
+    margin: 0;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    line-height: var(--heading-line-height);
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--color-text);
+}
+
+h1 { font-size: 2.25rem; letter-spacing: -0.02em; }
+h2 { font-size: 1.75rem; letter-spacing: -0.01em; margin-top: 3rem; }
+h3 { font-size: 1.375rem; }
+h4 { font-size: 1.125rem; }
+h5 { font-size: 1rem; font-weight: 600; }
+h6 { font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* Title and metadata */
+.ltx_title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.025em;
+}
+
+.ltx_authors {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-text);
+}
+
+.ltx_author {
+    margin-right: 1rem;
+}
+
+.ltx_contact {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+
+.ltx_date {
+    font-size: 0.95rem;
+    color: var(--color-text-muted);
+    margin-bottom: 2rem;
+}
+
+/* Abstract */
+.ltx_abstract {
+    margin: 2.5rem 0;
+    padding: 1.75rem;
+    background: var(--color-surface);
+    border-left: 3px solid var(--color-accent);
+    border-radius: 4px;
+    font-size: 0.95rem;
+}
+
+.ltx_abstract .ltx_title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--color-text-muted);
+}
+
+/* Paragraphs and text */
+p {
+    margin: 1rem 0;
+}
+
+a {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+a:hover {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
+}
+
+.ltx_ref {
+    color: var(--color-accent);
+    font-weight: 500;
+}
+
+/* Lists */
+ul, ol {
+    margin: 1rem 0;
+    padding-left: 2rem;
+}
+
+li {
+    margin: 0.5rem 0;
+}
+
+/* Equations */
+.ltx_equation {
+    margin: 1.5rem 0;
+    padding: 0.5rem 0;
+    overflow-x: auto;
+}
+
+.ltx_eqn_number {
+    float: right;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+
+.ltx_Math {
+    color: var(--color-text);
+}
+
+/* Theorems, proofs, etc. */
+.ltx_theorem, .ltx_proof, .ltx_lemma, .ltx_proposition, .ltx_corollary {
+    margin: 1.5rem 0;
+    padding: 1.25rem;
+    background: var(--color-surface);
+    border-radius: 4px;
+    border-left: 3px solid var(--color-accent);
+}
+
+.ltx_theorem .ltx_title,
+.ltx_proof .ltx_title,
+.ltx_lemma .ltx_title,
+.ltx_proposition .ltx_title,
+.ltx_corollary .ltx_title {
+    font-size: 1rem;
+    font-weight: 700;
+    font-style: italic;
+    margin-bottom: 0.5rem;
+    color: var(--color-accent);
+}
+
+/* Figures */
+figure, .ltx_figure {
+    margin: 2rem auto;
+    text-align: center;
+}
+
+figcaption, .ltx_caption {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    font-style: italic;
+}
+
+/* Tables */
+.ltx_table {
+    margin: 2rem auto;
+    overflow-x: auto;
+}
+
+table {
+    border-collapse: collapse;
+    margin: 0 auto;
+    font-size: 0.9rem;
+}
+
+th, td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+}
+
+th {
+    font-weight: 600;
+    background: var(--color-surface);
+    border-bottom: 2px solid var(--color-accent);
+}
+
+tr:hover {
+    background: var(--color-surface);
+}
+
+.ltx_caption {
+    margin-top: 0.5rem;
+}
+
+/* Code */
+code, .ltx_verbatim {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    background: var(--color-code-bg);
+    color: var(--color-code-keyword);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    border: 1px solid var(--color-border);
+}
+
+pre, .ltx_lstlisting {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    line-height: 1.5;
+    background: var(--color-code-bg);
+    color: var(--color-code-text);
+    padding: 1.25rem;
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+    overflow-x: auto;
+    margin: 1.5rem 0;
+}
+
+pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: inherit;
+}
+
+/* Table of contents */
+.ltx_TOC {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: var(--color-surface);
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+}
+
+.ltx_TOC .ltx_title {
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.ltx_TOC ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.ltx_TOC li {
+    margin: 0.5rem 0;
+}
+
+.ltx_TOC li li {
+    padding-left: 1.5rem;
+}
+
+.ltx_TOC a {
+    display: block;
+    padding: 0.25rem 0;
+    color: var(--color-text);
+}
+
+.ltx_TOC a:hover {
+    color: var(--color-accent);
+    text-decoration: none;
+}
+
+/* Bibliography */
+.ltx_bibliography {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--color-border);
+}
+
+.ltx_bibliography .ltx_title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.ltx_bibitem {
+    margin-bottom: 1rem;
+    padding-left: 2rem;
+    text-indent: -2rem;
+}
+
+.ltx_bib_author {
+    font-weight: 600;
+}
+
+.ltx_bib_title {
+    font-style: italic;
+}
+
+/* Sections */
+.ltx_section {
+    margin-top: 3rem;
+}
+
+/* Selection */
+::selection {
+    background: var(--color-accent);
+    color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    body {
+        padding: 0 1rem;
+        margin: 1.5rem auto;
+        font-size: 15px;
+    }
+
+    .ltx_title {
+        font-size: 2rem;
+    }
+
+    h1 { font-size: 1.75rem; }
+    h2 { font-size: 1.5rem; }
+    h3 { font-size: 1.25rem; }
+}

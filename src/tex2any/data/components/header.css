@@ -1,0 +1,73 @@
+/* Header Component */
+
+.tex2any-header {
+    background: var(--header-bg, #ffffff);
+    border-bottom: 1px solid var(--header-border, #e0e0e0);
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.tex2any-header-content {
+    max-width: var(--max-width, 1200px);
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+.tex2any-header-title {
+    flex: 1;
+}
+
+.tex2any-header-title h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--header-title-color, #1a1a1a);
+}
+
+.tex2any-header-subtitle {
+    margin-top: 0.25rem;
+    font-size: 0.9rem;
+    color: var(--header-subtitle-color, #666);
+}
+
+.tex2any-header-nav {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.tex2any-header-nav a {
+    color: var(--header-link-color, #0066cc);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.tex2any-header-nav a:hover {
+    color: var(--header-link-hover, #0052a3);
+}
+
+.tex2any-header-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--header-meta-color, #666);
+}
+
+@media (max-width: 768px) {
+    .tex2any-header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .tex2any-header-nav {
+        width: 100%;
+        justify-content: space-between;
+    }
+}

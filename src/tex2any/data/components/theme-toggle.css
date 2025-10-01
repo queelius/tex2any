@@ -1,0 +1,155 @@
+/* Theme Toggle Component - Light/Dark mode switcher */
+/* Works within a container, not fixed to viewport */
+
+.tex2any-theme-toggle {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--toggle-bg, #ffffff);
+    border: 2px solid var(--toggle-border, #d0d0d0);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.tex2any-theme-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.tex2any-theme-toggle:active {
+    transform: scale(0.95);
+}
+
+/* Dark mode styles */
+body[data-theme="dark"] {
+    --color-text: #e4e4e4;
+    --color-bg: #1a1a1a;
+    --color-accent: #6ba3ff;
+    --color-accent-light: #8eb8ff;
+    --color-muted: #999999;
+    --color-border: #404040;
+    --color-surface: #2a2a2a;
+    --color-surface-alt: #333333;
+
+    /* Update component variables */
+    --link-color: #6ba3ff;
+    --link-hover-color: #8eb8ff;
+    --toc-bg: #2a2a2a;
+    --toc-border: #404040;
+    --header-bg: #2a2a2a;
+    --header-border: #404040;
+    --footer-bg: #2a2a2a;
+    --footer-border: #404040;
+    --sidebar-bg: #2a2a2a;
+    --sidebar-border: #404040;
+    --toggle-bg: #2a2a2a;
+    --toggle-border: #404040;
+}
+
+body[data-theme="dark"] {
+    background: var(--color-bg);
+    color: var(--color-text);
+}
+
+body[data-theme="dark"] h1,
+body[data-theme="dark"] h2,
+body[data-theme="dark"] h3,
+body[data-theme="dark"] h4,
+body[data-theme="dark"] h5,
+body[data-theme="dark"] h6 {
+    color: #ffffff;
+}
+
+body[data-theme="dark"] a {
+    color: var(--color-accent);
+}
+
+body[data-theme="dark"] a:hover {
+    color: var(--color-accent-light);
+}
+
+body[data-theme="dark"] code,
+body[data-theme="dark"] .ltx_verbatim {
+    background: var(--color-surface);
+    color: #ffa657;
+}
+
+body[data-theme="dark"] pre,
+body[data-theme="dark"] .ltx_lstlisting {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+}
+
+body[data-theme="dark"] .ltx_abstract,
+body[data-theme="dark"] .ltx_theorem,
+body[data-theme="dark"] .ltx_proof,
+body[data-theme="dark"] .ltx_definition,
+body[data-theme="dark"] .ltx_lemma,
+body[data-theme="dark"] .ltx_corollary {
+    background: var(--color-surface);
+}
+
+body[data-theme="dark"] table th,
+body[data-theme="dark"] table td {
+    border-bottom-color: var(--color-border);
+}
+
+body[data-theme="dark"] table th {
+    background: var(--color-surface);
+    color: #ffffff;
+}
+
+body[data-theme="dark"] tbody tr:hover {
+    background: var(--color-surface-alt);
+}
+
+body[data-theme="dark"] h2 {
+    border-bottom-color: var(--color-border);
+}
+
+/* Selection */
+body[data-theme="dark"] ::selection {
+    background: var(--color-accent);
+    color: var(--color-bg);
+}
+
+/* Smooth transition */
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Tooltip */
+.tex2any-theme-toggle::before {
+    content: attr(aria-label);
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    margin-bottom: 10px;
+    padding: 0.5rem 0.75rem;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+.tex2any-theme-toggle:hover::before {
+    opacity: 1;
+}
+
+body[data-theme="dark"] .tex2any-theme-toggle::before {
+    background: rgba(255,255,255,0.9);
+    color: black;
+}

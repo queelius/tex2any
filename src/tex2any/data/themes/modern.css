@@ -1,0 +1,344 @@
+/* Modern Theme - Bold, contemporary design with generous whitespace */
+
+:root {
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-headings: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --color-text: #0f172a;
+    --color-bg: #ffffff;
+    --color-accent: #6366f1;
+    --color-accent-dark: #4f46e5;
+    --color-muted: #64748b;
+    --color-border: #e2e8f0;
+    --color-surface: #f8fafc;
+    --max-width: 48rem;
+    --link-color: var(--color-accent);
+    --link-hover-color: var(--color-accent-dark);
+    --toc-bg: var(--color-surface);
+    --header-bg: var(--color-surface);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 3rem 2rem;
+    line-height: 1.75;
+    font-family: var(--font-body);
+    font-size: 1.0625rem;
+    color: var(--color-text);
+    background: var(--color-bg);
+    font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-headings);
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-top: 3rem;
+    margin-bottom: 1.25rem;
+}
+
+h1 {
+    font-size: 3rem;
+    margin-top: 0;
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-dark) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-top: 4rem;
+}
+
+h3 {
+    font-size: 1.5rem;
+}
+
+h4 {
+    font-size: 1.25rem;
+}
+
+a {
+    color: var(--color-accent);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-bottom: 2px solid transparent;
+}
+
+a:hover {
+    color: var(--color-accent-dark);
+    border-bottom-color: currentColor;
+}
+
+p {
+    margin: 1.25rem 0;
+}
+
+.ltx_document {
+    margin: 0;
+}
+
+.ltx_title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-dark) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.03em;
+}
+
+.ltx_authors {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+.ltx_date {
+    font-size: 1rem;
+    color: var(--color-muted);
+    margin-bottom: 3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+}
+
+.ltx_abstract {
+    margin: 3rem 0;
+    padding: 2rem;
+    background: var(--color-surface);
+    border-radius: 12px;
+    border-left: 4px solid var(--color-accent);
+    font-size: 1.125rem;
+    line-height: 1.7;
+}
+
+.ltx_abstract .ltx_title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: none;
+    -webkit-text-fill-color: var(--color-text);
+}
+
+.ltx_section {
+    margin-top: 4rem;
+}
+
+.ltx_equation {
+    margin: 2.5rem 0;
+    padding: 1.5rem;
+    background: var(--color-surface);
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+.ltx_eqn_number {
+    float: right;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--color-accent);
+    font-weight: 600;
+}
+
+.ltx_theorem, .ltx_proof, .ltx_definition, .ltx_lemma, .ltx_corollary {
+    margin: 2.5rem 0;
+    padding: 2rem;
+    background: var(--color-surface);
+    border-radius: 12px;
+    border-left: 4px solid var(--color-accent);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.ltx_theorem .ltx_title,
+.ltx_definition .ltx_title,
+.ltx_lemma .ltx_title,
+.ltx_corollary .ltx_title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+}
+
+.ltx_proof {
+    border-left-color: var(--color-muted);
+}
+
+.ltx_proof .ltx_title {
+    color: var(--color-muted);
+}
+
+figure, .ltx_figure {
+    margin: 3rem 0;
+    text-align: center;
+}
+
+figcaption, .ltx_caption {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    color: var(--color-muted);
+    font-weight: 500;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 2.5rem 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+th, td {
+    padding: 1rem 1.25rem;
+    text-align: left;
+}
+
+th {
+    background: var(--color-surface);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.875rem;
+    color: var(--color-accent);
+    border-bottom: 2px solid var(--color-accent);
+}
+
+tbody tr {
+    border-bottom: 1px solid var(--color-border);
+    transition: background 0.15s;
+}
+
+tbody tr:hover {
+    background: var(--color-surface);
+}
+
+code, .ltx_verbatim {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    background: var(--color-surface);
+    padding: 0.25em 0.5em;
+    border-radius: 4px;
+    color: var(--color-accent);
+    font-weight: 500;
+}
+
+pre, .ltx_lstlisting {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    background: var(--color-surface);
+    padding: 1.5rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    line-height: 1.6;
+    margin: 2rem 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+pre code {
+    background: none;
+    color: var(--color-text);
+    padding: 0;
+}
+
+.ltx_bibliography {
+    margin-top: 4rem;
+    padding-top: 3rem;
+    border-top: 2px solid var(--color-border);
+}
+
+.ltx_bibliography .ltx_title {
+    font-size: 2rem;
+}
+
+.ltx_bibitem {
+    margin-bottom: 1.25rem;
+    padding-left: 2rem;
+    text-indent: -2rem;
+}
+
+.ltx_bib_author {
+    font-weight: 700;
+}
+
+.ltx_bib_title {
+    font-style: italic;
+    color: var(--color-muted);
+}
+
+.ltx_TOC {
+    margin: 3rem 0;
+    padding: 2rem;
+    background: var(--color-surface);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.ltx_TOC .ltx_title {
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.ltx_TOC ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.ltx_TOC li {
+    margin: 0.75rem 0;
+}
+
+.ltx_TOC li li {
+    padding-left: 1.5rem;
+    margin: 0.5rem 0;
+}
+
+.ltx_TOC a {
+    font-weight: 500;
+}
+
+/* Selection */
+::selection {
+    background: var(--color-accent);
+    color: white;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 2rem 1.25rem;
+        font-size: 1rem;
+    }
+
+    .ltx_title {
+        font-size: 2.5rem;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+}

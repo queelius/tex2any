@@ -1,0 +1,179 @@
+/* Clean minimal theme - based on site.css */
+
+:root {
+    --max-width: 70ch;
+    --font-body: system-ui, -apple-system, sans-serif;
+    --font-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+    --color-text: #1a1a1a;
+    --color-bg: #ffffff;
+    --color-accent: #0066cc;
+    --color-muted: #666666;
+    --spacing: 2rem;
+
+    /* Component integration variables */
+    --link-color: var(--color-accent);
+    --link-hover-color: #0052a3;
+    --toc-bg: #f8f8f8;
+    --toc-border: #ddd;
+    --header-bg: var(--color-bg);
+    --header-border: #e0e0e0;
+    --footer-bg: #f8f8f8;
+    --footer-border: #e0e0e0;
+    --sidebar-bg: #f8f8f8;
+    --sidebar-border: #ddd;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    max-width: var(--max-width);
+    margin: var(--spacing) auto;
+    padding: 0 1rem;
+    line-height: 1.6;
+    font-family: var(--font-body);
+    color: var(--color-text);
+    background: var(--color-bg);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+    font-weight: 600;
+}
+
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.25rem; }
+
+a {
+    color: var(--color-accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* LaTeXML specific styles */
+.ltx_document {
+    margin: 0;
+}
+
+.ltx_title {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.ltx_authors {
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.ltx_abstract {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: #f8f8f8;
+    border-left: 4px solid var(--color-accent);
+}
+
+.ltx_equation {
+    margin: 1.5rem 0;
+    overflow-x: auto;
+}
+
+.ltx_eqn_number {
+    float: right;
+    opacity: 0.6;
+    font-size: 0.9rem;
+}
+
+.ltx_theorem, .ltx_proof {
+    margin: 1.5rem 0;
+}
+
+.ltx_theorem .ltx_title {
+    font-size: 1rem;
+    font-weight: 600;
+    font-style: italic;
+}
+
+figure, .ltx_figure {
+    margin: 1.5rem auto;
+    text-align: center;
+}
+
+figcaption, .ltx_caption {
+    font-size: 0.9rem;
+    opacity: 0.7;
+    margin-top: 0.5rem;
+}
+
+.ltx_table {
+    margin: 1.5rem auto;
+}
+
+table {
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+
+th, td {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    font-weight: 600;
+    border-bottom: 2px solid #333;
+}
+
+code, .ltx_verbatim {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background: #f5f5f5;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+}
+
+pre, .ltx_lstlisting {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    background: #f5f5f5;
+    padding: 1rem;
+    border-radius: 5px;
+    overflow-x: auto;
+    line-height: 1.4;
+}
+
+.ltx_TOC {
+    margin: 2rem 0;
+    padding: 1rem;
+    background: #f8f8f8;
+    border-radius: 5px;
+}
+
+.ltx_TOC ul {
+    list-style: none;
+    padding-left: 1rem;
+}
+
+.ltx_TOC > ul {
+    padding-left: 0;
+}
+
+.ltx_ref {
+    color: var(--color-accent);
+}
+
+/* Bibliography */
+.ltx_bibliography .ltx_bibitem {
+    margin-bottom: 0.5rem;
+}
+
+.ltx_bib_author {
+    font-weight: 600;
+}

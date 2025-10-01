@@ -1,0 +1,84 @@
+/* Header Component - Document header/navbar */
+
+.doc-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--color-bg, #ffffff);
+    border-bottom: 1px solid var(--color-border, #e1e4e8);
+    padding: 1rem 0;
+    margin: -3rem -2rem 2rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(10px);
+    background: var(--color-bg, rgba(255, 255, 255, 0.95));
+}
+
+[data-theme="dark"] .doc-header {
+    background: rgba(13, 17, 23, 0.95);
+}
+
+.doc-header-content {
+    max-width: 75ch;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.doc-header-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text, #1a1a1a);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.doc-header-title:hover {
+    color: var(--color-accent, #0366d6);
+}
+
+.doc-header-nav {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.doc-header-nav a {
+    font-size: 0.9rem;
+    color: var(--color-text-muted, #666);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.doc-header-nav a:hover {
+    color: var(--color-accent, #0366d6);
+}
+
+body.has-floating-toc .doc-header {
+    margin-left: calc(-280px - 2rem);
+    margin-right: -2rem;
+    padding-left: calc(280px + 2rem);
+    padding-right: 2rem;
+}
+
+@media (max-width: 1200px) {
+    body.has-floating-toc .doc-header {
+        margin-left: -2rem;
+        padding-left: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .doc-header {
+        margin: -1.5rem -1rem 1.5rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .doc-header-nav {
+        gap: 1rem;
+        font-size: 0.85rem;
+    }
+}

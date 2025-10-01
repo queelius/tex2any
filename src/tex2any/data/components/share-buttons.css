@@ -1,0 +1,232 @@
+/* Share Buttons Component - Social sharing functionality */
+/* Floating share menu positioned near other action buttons */
+
+.tex2any-share-container {
+    position: absolute;
+    bottom: 80px; /* Above back-to-top button */
+    right: 20px;
+    z-index: 1000;
+}
+
+/* Main share button (trigger) */
+.tex2any-share-button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--toggle-bg, #ffffff);
+    border: 2px solid var(--toggle-border, #d0d0d0);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.tex2any-share-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background: var(--link-color, #0066cc);
+    border-color: var(--link-color, #0066cc);
+    color: #ffffff;
+}
+
+.tex2any-share-button:active {
+    transform: scale(0.95);
+}
+
+.tex2any-share-button svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+}
+
+/* Share menu */
+.tex2any-share-menu {
+    position: absolute;
+    bottom: 60px; /* Above the main button */
+    right: 0;
+    background: var(--toggle-bg, #ffffff);
+    border: 1px solid var(--toggle-border, #d0d0d0);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    padding: 0.5rem;
+    min-width: 180px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+}
+
+.tex2any-share-menu.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Share menu items */
+.tex2any-share-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    color: var(--text-color, #1a1a1a);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.tex2any-share-item:hover {
+    background: var(--link-color, #0066cc);
+    color: #ffffff;
+}
+
+.tex2any-share-item svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+    flex-shrink: 0;
+}
+
+.tex2any-share-item span {
+    flex: 1;
+}
+
+/* Individual share button colors */
+.tex2any-share-item.twitter:hover {
+    background: #1DA1F2;
+}
+
+.tex2any-share-item.email:hover {
+    background: #EA4335;
+}
+
+.tex2any-share-item.linkedin:hover {
+    background: #0077B5;
+}
+
+.tex2any-share-item.copy-link:hover {
+    background: #6ba3ff;
+}
+
+/* Tooltip */
+.tex2any-share-button::before {
+    content: attr(aria-label);
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    margin-bottom: 10px;
+    padding: 0.5rem 0.75rem;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+.tex2any-share-button:hover::before {
+    opacity: 1;
+}
+
+/* Dark mode adjustments */
+body[data-theme="dark"] .tex2any-share-button {
+    background: var(--color-surface, #2a2a2a);
+    border-color: var(--color-border, #404040);
+    color: var(--color-text, #e4e4e4);
+}
+
+body[data-theme="dark"] .tex2any-share-button:hover {
+    background: var(--link-color, #6ba3ff);
+    border-color: var(--link-color, #6ba3ff);
+    color: #1a1a1a;
+}
+
+body[data-theme="dark"] .tex2any-share-menu {
+    background: var(--color-surface, #2a2a2a);
+    border-color: var(--color-border, #404040);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+body[data-theme="dark"] .tex2any-share-item {
+    color: var(--color-text, #e4e4e4);
+}
+
+body[data-theme="dark"] .tex2any-share-button::before {
+    background: rgba(255, 255, 255, 0.9);
+    color: black;
+}
+
+/* Copy notification */
+.tex2any-share-notification {
+    position: fixed;
+    bottom: 140px;
+    right: 20px;
+    padding: 0.75rem 1rem;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    z-index: 10001;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.tex2any-share-notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+body[data-theme="dark"] .tex2any-share-notification {
+    background: rgba(255, 255, 255, 0.9);
+    color: black;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .tex2any-share-container {
+        bottom: 70px;
+    }
+
+    .tex2any-share-menu {
+        min-width: 160px;
+    }
+
+    .tex2any-share-item {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* Accessibility */
+.tex2any-share-button:focus-visible,
+.tex2any-share-item:focus-visible {
+    outline: 2px solid var(--link-color, #0066cc);
+    outline-offset: 2px;
+}
+
+/* Arrow pointing to button */
+.tex2any-share-menu::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    right: 15px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid var(--toggle-bg, #ffffff);
+}
+
+body[data-theme="dark"] .tex2any-share-menu::after {
+    border-top-color: var(--color-surface, #2a2a2a);
+}

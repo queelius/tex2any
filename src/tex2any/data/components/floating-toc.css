@@ -1,0 +1,110 @@
+/* Floating TOC Component - Left sidebar navigation */
+/* Works within a container, not fixed to viewport */
+
+.tex2any-floating-toc {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 280px;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 2rem 1.5rem;
+    background: var(--toc-bg, #f8f8f8);
+    border-right: 1px solid var(--toc-border, #ddd);
+    font-size: 0.9rem;
+    z-index: 100;
+    transition: transform 0.3s ease;
+}
+
+.tex2any-floating-toc.collapsed {
+    transform: translateX(-100%);
+}
+
+.tex2any-floating-toc-toggle {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    z-index: 101;
+    padding: 0.5rem 0.75rem;
+    background: var(--toc-toggle-bg, #ffffff);
+    border: 1px solid var(--toc-border, #ddd);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.2s;
+}
+
+.tex2any-floating-toc-toggle:hover {
+    background: var(--toc-toggle-hover, #f0f0f0);
+}
+
+.tex2any-floating-toc .tex2any-toc-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-color, #1a1a1a);
+}
+
+.tex2any-floating-toc ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.tex2any-floating-toc li {
+    margin: 0.3rem 0;
+}
+
+.tex2any-floating-toc li li {
+    padding-left: 1rem;
+}
+
+.tex2any-floating-toc li li li {
+    padding-left: 2rem;
+}
+
+.tex2any-floating-toc a {
+    display: block;
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+    color: var(--link-color, #0066cc);
+    text-decoration: none;
+}
+
+.tex2any-floating-toc a:hover {
+    background: var(--toc-hover-bg, rgba(0, 102, 204, 0.1));
+}
+
+.tex2any-floating-toc a.active {
+    background: var(--toc-active-bg, rgba(0, 102, 204, 0.15));
+    font-weight: 500;
+}
+
+/* TOC is an overlay - doesn't affect main content layout at all */
+body.has-floating-toc {
+    /* No layout changes - TOC floats on top */
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Responsive: hide TOC on small screens */
+@media (max-width: 1024px) {
+    .tex2any-floating-toc {
+        transform: translateX(-100%);
+    }
+
+    .tex2any-floating-toc.show {
+        transform: translateX(0);
+        box-shadow: 2px 0 8px rgba(0,0,0,0.2);
+    }
+
+    body.has-floating-toc {
+        margin-left: 0;
+    }
+}

@@ -1,0 +1,317 @@
+/* Citation Generator Component - Generate citations from document metadata */
+/* Positioned near share buttons for easy access */
+
+.tex2any-citation-container {
+    position: absolute;
+    bottom: 140px; /* Above share button */
+    right: 20px;
+    z-index: 1000;
+}
+
+/* Main citation button */
+.tex2any-citation-button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--toggle-bg, #ffffff);
+    border: 2px solid var(--toggle-border, #d0d0d0);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.tex2any-citation-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background: var(--link-color, #0066cc);
+    border-color: var(--link-color, #0066cc);
+    color: #ffffff;
+}
+
+.tex2any-citation-button:active {
+    transform: scale(0.95);
+}
+
+.tex2any-citation-button svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+}
+
+/* Citation modal */
+.tex2any-citation-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--toggle-bg, #ffffff);
+    border: 1px solid var(--toggle-border, #d0d0d0);
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    padding: 2rem;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    z-index: 10001;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.tex2any-citation-modal.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Modal overlay */
+.tex2any-citation-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.tex2any-citation-overlay.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Modal header */
+.tex2any-citation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--toggle-border, #d0d0d0);
+}
+
+.tex2any-citation-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--text-color, #1a1a1a);
+}
+
+.tex2any-citation-close {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-color, #1a1a1a);
+    padding: 0.25rem;
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.tex2any-citation-close:hover {
+    color: var(--link-color, #0066cc);
+}
+
+/* Citation format tabs */
+.tex2any-citation-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--toggle-border, #d0d0d0);
+}
+
+.tex2any-citation-tab {
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    color: var(--text-color, #1a1a1a);
+    transition: all 0.2s ease;
+}
+
+.tex2any-citation-tab:hover {
+    color: var(--link-color, #0066cc);
+}
+
+.tex2any-citation-tab.active {
+    border-bottom-color: var(--link-color, #0066cc);
+    color: var(--link-color, #0066cc);
+    font-weight: 600;
+}
+
+/* Citation content */
+.tex2any-citation-content {
+    display: none;
+}
+
+.tex2any-citation-content.active {
+    display: block;
+}
+
+.tex2any-citation-text {
+    background: var(--code-bg, #f5f5f5);
+    padding: 1.25rem;
+    border-radius: 6px;
+    font-family: var(--font-mono, 'Courier New', monospace);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    color: var(--text-color, #1a1a1a);
+    border: 1px solid var(--toggle-border, #d0d0d0);
+    margin-bottom: 1rem;
+}
+
+/* Copy button */
+.tex2any-citation-copy {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--link-color, #0066cc);
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tex2any-citation-copy:hover {
+    background: var(--link-hover-color, #0052a3);
+    box-shadow: 0 2px 8px rgba(0, 102, 204, 0.3);
+}
+
+.tex2any-citation-copy:active {
+    transform: scale(0.98);
+}
+
+.tex2any-citation-copy svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
+.tex2any-citation-copy.copied {
+    background: #4caf50;
+}
+
+/* Tooltip */
+.tex2any-citation-button::before {
+    content: attr(aria-label);
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    margin-bottom: 10px;
+    padding: 0.5rem 0.75rem;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+.tex2any-citation-button:hover::before {
+    opacity: 1;
+}
+
+/* Dark mode adjustments */
+body[data-theme="dark"] .tex2any-citation-button {
+    background: var(--color-surface, #2a2a2a);
+    border-color: var(--color-border, #404040);
+    color: var(--color-text, #e4e4e4);
+}
+
+body[data-theme="dark"] .tex2any-citation-button:hover {
+    background: var(--link-color, #6ba3ff);
+    border-color: var(--link-color, #6ba3ff);
+    color: #1a1a1a;
+}
+
+body[data-theme="dark"] .tex2any-citation-modal {
+    background: var(--color-surface, #2a2a2a);
+    border-color: var(--color-border, #404040);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+}
+
+body[data-theme="dark"] .tex2any-citation-header {
+    border-bottom-color: var(--color-border, #404040);
+}
+
+body[data-theme="dark"] .tex2any-citation-header h3,
+body[data-theme="dark"] .tex2any-citation-close,
+body[data-theme="dark"] .tex2any-citation-tab {
+    color: var(--color-text, #e4e4e4);
+}
+
+body[data-theme="dark"] .tex2any-citation-tabs {
+    border-bottom-color: var(--color-border, #404040);
+}
+
+body[data-theme="dark"] .tex2any-citation-text {
+    background: var(--color-bg, #1a1a1a);
+    border-color: var(--color-border, #404040);
+    color: var(--color-text, #e4e4e4);
+}
+
+body[data-theme="dark"] .tex2any-citation-overlay {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+body[data-theme="dark"] .tex2any-citation-button::before {
+    background: rgba(255, 255, 255, 0.9);
+    color: black;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .tex2any-citation-container {
+        bottom: 130px;
+    }
+
+    .tex2any-citation-modal {
+        width: 95%;
+        padding: 1.5rem;
+    }
+
+    .tex2any-citation-tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+    }
+
+    .tex2any-citation-tab {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+        white-space: nowrap;
+    }
+
+    .tex2any-citation-text {
+        font-size: 0.85rem;
+        padding: 1rem;
+    }
+}
+
+/* Accessibility */
+.tex2any-citation-button:focus-visible,
+.tex2any-citation-close:focus-visible,
+.tex2any-citation-tab:focus-visible,
+.tex2any-citation-copy:focus-visible {
+    outline: 2px solid var(--link-color, #0066cc);
+    outline-offset: 2px;
+}

@@ -1,0 +1,168 @@
+// Footer Component JavaScript
+(function() {
+    'use strict';
+
+    function initFooter() {
+        // Get config data from meta tag (injected by Python)
+        const configMeta = document.querySelector('meta[name="tex2any-footer-config"]');
+        let config = {};
+
+        if (configMeta) {
+            try {
+                config = JSON.parse(configMeta.getAttribute('content'));
+            } catch (e) {
+                console.warn('Failed to parse footer config:', e);
+            }
+        }
+
+        // Create footer
+        const footer = document.createElement('footer');
+        footer.className = 'tex2any-footer';
+
+        const footerContent = document.createElement('div');
+        footerContent.className = 'tex2any-footer-content';
+
+        // Left section - Author info
+        if (config.author_name || config.author_email) {
+            const authorSection = document.createElement('div');
+            authorSection.className = 'tex2any-footer-section';
+
+            const h3 = document.createElement('h3');
+            h3.textContent = 'Author';
+            authorSection.appendChild(h3);
+
+            if (config.author_name) {
+                const p = document.createElement('p');
+                p.textContent = config.author_name;
+                authorSection.appendChild(p);
+            }
+
+            if (config.author_email) {
+                const p = document.createElement('p');
+                const a = document.createElement('a');
+                a.href = 'mailto:' + config.author_email;
+                a.textContent = config.author_email;
+                p.appendChild(a);
+                authorSection.appendChild(p);
+            }
+
+            footerContent.appendChild(authorSection);
+        }
+
+        // Middle section - Document info
+        const docSection = document.createElement('div');
+        docSection.className = 'tex2any-footer-section';
+
+        const docTitle = document.querySelector('.ltx_title_document, title');
+        if (docTitle) {
+            const h3 = document.createElement('h3');
+            h3.textContent = 'Document';
+            docSection.appendChild(h3);
+
+            const p = document.createElement('p');
+            p.textContent = docTitle.textContent || document.title;
+            docSection.appendChild(p);
+
+            // Add date if available
+            const date = document.querySelector('.ltx_date');
+            if (date) {
+                const dateP = document.createElement('p');
+                dateP.textContent = date.textContent;
+                docSection.appendChild(dateP);
+            }
+        }
+
+        footerContent.appendChild(docSection);
+
+        // Right section - Links
+        const linksSection = document.createElement('div');
+        linksSection.className = 'tex2any-footer-section';
+
+        const h3 = document.createElement('h3');
+        h3.textContent = 'Quick Links';
+        linksSection.appendChild(h3);
+
+        const ul = document.createElement('ul');
+
+        // Add link to top
+        const topLi = document.createElement('li');
+        const topA = document.createElement('a');
+        topA.href = '#';
+        topA.textContent = 'Back to Top';
+        topLi.appendChild(topA);
+        ul.appendChild(topLi);
+
+        // Add links to major sections
+        const sections = document.querySelectorAll('.ltx_section');
+        sections.forEach((section, i) => {
+            if (i >= 3) return; // Only show first 3
+            const heading = section.querySelector('.ltx_title');
+            if (!heading || !section.id) return;
+
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = '#' + section.id;
+            a.textContent = heading.textContent.replace(/^\d+\s*/, '');
+            li.appendChild(a);
+            ul.appendChild(li);
+        });
+
+        linksSection.appendChild(ul);
+        footerContent.appendChild(linksSection);
+
+        footer.appendChild(footerContent);
+
+        // Bottom bar - Copyright
+        const bottom = document.createElement('div');
+        bottom.className = 'tex2any-footer-bottom';
+
+        const copyright = document.createElement('div');
+        copyright.className = 'tex2any-footer-copyright';
+
+        let copyrightText = '';
+        if (config.copyright_year && config.author_name) {
+            copyrightText = `© ${config.copyright_year} ${config.author_name}`;
+        } else if (config.copyright_year) {
+            copyrightText = `© ${config.copyright_year}`;
+        } else if (config.author_name) {
+            copyrightText = `© ${config.author_name}`;
+        }
+
+        if (config.license) {
+            copyrightText += copyrightText ? ` • ${config.license}` : config.license;
+        }
+
+        if (config.custom_text) {
+            copyrightText += copyrightText ? ` • ${config.custom_text}` : config.custom_text;
+        }
+
+        if (!copyrightText) {
+            copyrightText = 'Generated by tex2any';
+        }
+
+        copyright.textContent = copyrightText;
+        bottom.appendChild(copyright);
+
+        // Generated by
+        const links = document.createElement('div');
+        links.className = 'tex2any-footer-links';
+
+        const genLink = document.createElement('a');
+        genLink.href = 'https://github.com/yourusername/tex2any';
+        genLink.textContent = 'Generated by tex2any';
+        links.appendChild(genLink);
+
+        bottom.appendChild(links);
+        footer.appendChild(bottom);
+
+        // Append to body
+        document.body.appendChild(footer);
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initFooter);
+    } else {
+        initFooter();
+    }
+})();

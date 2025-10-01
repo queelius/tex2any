@@ -1,0 +1,55 @@
+/* Footer Component - Document footer with metadata */
+
+.doc-footer {
+    margin-top: 5rem;
+    padding: 2rem 0;
+    border-top: 2px solid var(--color-border, #e1e4e8);
+    font-size: 0.875rem;
+    color: var(--color-text-muted, #666);
+}
+
+.doc-footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.doc-footer-info {
+    flex: 1;
+}
+
+.doc-footer-generated {
+    opacity: 0.7;
+    font-size: 0.8125rem;
+}
+
+.doc-footer-generated a {
+    color: inherit;
+    text-decoration: underline;
+}
+
+.doc-footer-links {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.doc-footer-links a {
+    color: var(--color-text-muted, #666);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.doc-footer-links a:hover {
+    color: var(--color-accent, #0366d6);
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .doc-footer-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

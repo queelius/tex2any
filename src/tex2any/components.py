@@ -1,0 +1,170 @@
+"""Component system for tex2any - modular UI elements."""
+
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Optional, Dict, List
+try:
+    from importlib.resources import files
+except ImportError:
+    from importlib import resources as pkg_resources
+    files = None
+
+
+@dataclass
+class Component:
+    """Base class for UI components."""
+    name: str
+    description: str
+    requires_js: bool = False
+    layout_position: Optional[str] = None  # 'left', 'right', 'header', 'footer', None
+
+    def get_css(self) -> str:
+        """Get component CSS content."""
+        return self._load_resource('css')
+
+    def get_js(self) -> Optional[str]:
+        """Get component JS content if it exists."""
+        if not self.requires_js:
+            return None
+        return self._load_resource('js')
+
+    def _load_resource(self, resource_type: str) -> str:
+        """Load resource from package data."""
+        resource_name = f'{self.name}.{resource_type}'
+
+        try:
+            if files is not None:
+                # For Python 3.9+
+                resource_files = files('tex2any.data.components')
+                resource_path = resource_files / resource_name
+                return resource_path.read_text(encoding='utf-8')
+            else:
+                # For Python 3.7-3.8
+                import pkg_resources as pkg
+                data = pkg.resource_string('tex2any', f'data/components/{resource_name}')
+                return data.decode('utf-8')
+        except (FileNotFoundError, ModuleNotFoundError, Exception):
+            # Fallback: Try to read from the package directory directly
+            import tex2any
+            package_dir = Path(tex2any.__file__).parent
+            resource_path = package_dir / 'data' / 'components' / resource_name
+            if resource_path.exists():
+                return resource_path.read_text(encoding='utf-8')
+
+        raise FileNotFoundError(
+            f"Component resource not found: {self.name}.{resource_type}"
+        )
+
+    def get_html_injection(self) -> Optional[str]:
+        """Get HTML to inject into the document (e.g., for search bar, header)."""
+        return None
+
+
+# Component Registry
+COMPONENTS: Dict[str, Component] = {
+    'toc': Component(
+        name='toc',
+        description='Inline table of contents',
+        requires_js=True,
+        layout_position=None
+    ),
+    'floating-toc': Component(
+        name='floating-toc',
+        description='Floating sidebar table of contents (left)',
+        requires_js=True,
+        layout_position='left'
+    ),
+    'search': Component(
+        name='search',
+        description='Full-text search functionality',
+        requires_js=True,
+        layout_position='header'
+    ),
+    'footer': Component(
+        name='footer',
+        description='Document footer with navigation and info',
+        requires_js=True,
+        layout_position='footer'
+    ),
+    'sidebar-right': Component(
+        name='sidebar-right',
+        description='Right sidebar for notes, annotations, or quick links',
+        requires_js=True,
+        layout_position='right'
+    ),
+    'theme-toggle': Component(
+        name='theme-toggle',
+        description='Light/dark mode toggle button',
+        requires_js=True,
+        layout_position=None
+    ),
+    'reading-progress': Component(
+        name='reading-progress',
+        description='Progress bar showing scroll position',
+        requires_js=True,
+        layout_position='header'
+    ),
+    'back-to-top': Component(
+        name='back-to-top',
+        description='Floating button to scroll to top',
+        requires_js=True,
+        layout_position=None
+    ),
+    'sidenotes': Component(
+        name='sidenotes',
+        description='Convert footnotes to margin notes',
+        requires_js=True,
+        layout_position=None
+    ),
+    'equation-numbers': Component(
+        name='equation-numbers',
+        description='Automatic numbering for equations',
+        requires_js=True,
+        layout_position=None
+    ),
+    'copy-code': Component(
+        name='copy-code',
+        description='Add copy button to code blocks',
+        requires_js=True,
+        layout_position=None
+    ),
+    'share-buttons': Component(
+        name='share-buttons',
+        description='Floating share menu (Twitter, email, link)',
+        requires_js=True,
+        layout_position=None
+    ),
+    'citation-generator': Component(
+        name='citation-generator',
+        description='Generate BibTeX/APA citation from document metadata',
+        requires_js=True,
+        layout_position=None
+    ),
+    'reading-time': Component(
+        name='reading-time',
+        description='Display estimated reading time',
+        requires_js=True,
+        layout_position='header'
+    ),
+    'document-stats': Component(
+        name='document-stats',
+        description='Show word count and section count',
+        requires_js=True,
+        layout_position='footer'
+    ),
+}
+
+
+def get_component(name: str) -> Component:
+    """Get a component by name."""
+    if name not in COMPONENTS:
+        raise ValueError(
+            f"Unknown component: {name}\n"
+            f"Available components: {', '.join(COMPONENTS.keys())}"
+        )
+    return COMPONENTS[name]
+
+
+def list_components() -> List[Component]:
+    """List all available components."""
+    return list(COMPONENTS.values())

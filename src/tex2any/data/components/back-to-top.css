@@ -1,0 +1,86 @@
+/* Back to Top Component - Floating scroll button */
+/* Positioned near theme-toggle button */
+
+.tex2any-back-to-top {
+    position: absolute;
+    bottom: 20px;
+    right: 80px; /* Positioned left of theme-toggle */
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--toggle-bg, #ffffff);
+    border: 2px solid var(--toggle-border, #d0d0d0);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.8);
+}
+
+.tex2any-back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+.tex2any-back-to-top:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    background: var(--link-color, #0066cc);
+    border-color: var(--link-color, #0066cc);
+    color: #ffffff;
+}
+
+.tex2any-back-to-top:active {
+    transform: scale(0.95);
+}
+
+.tex2any-back-to-top svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+}
+
+/* Tooltip */
+.tex2any-back-to-top::before {
+    content: attr(aria-label);
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    margin-bottom: 10px;
+    padding: 0.5rem 0.75rem;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+.tex2any-back-to-top:hover::before {
+    opacity: 1;
+}
+
+/* Dark mode */
+body[data-theme="dark"] .tex2any-back-to-top::before {
+    background: rgba(255,255,255,0.9);
+    color: black;
+}
+
+body[data-theme="dark"] .tex2any-back-to-top:hover {
+    background: var(--link-color, #6ba3ff);
+    border-color: var(--link-color, #6ba3ff);
+}
+
+/* Adjust position when theme-toggle is not present */
+body:not(.has-theme-toggle) .tex2any-back-to-top {
+    right: 20px;
+}

@@ -1,0 +1,168 @@
+/* Copy Code Component - Add copy button to code blocks */
+/* Enhances code blocks with clipboard functionality */
+
+/* Code block container wrapper */
+.tex2any-code-wrapper {
+    position: relative;
+    margin: 1em 0;
+}
+
+/* Copy button */
+.tex2any-copy-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 0.4rem 0.75rem;
+    background: var(--toggle-bg, rgba(255, 255, 255, 0.9));
+    border: 1px solid var(--toggle-border, #d0d0d0);
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    color: var(--text-color, #1a1a1a);
+    cursor: pointer;
+    opacity: 0;
+    transition: all 0.2s ease;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tex2any-code-wrapper:hover .tex2any-copy-button {
+    opacity: 1;
+}
+
+.tex2any-copy-button:hover {
+    background: var(--link-color, #0066cc);
+    border-color: var(--link-color, #0066cc);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 102, 204, 0.3);
+}
+
+.tex2any-copy-button:active {
+    transform: scale(0.95);
+}
+
+/* Success state */
+.tex2any-copy-button.copied {
+    background: #4caf50;
+    border-color: #4caf50;
+    color: #ffffff;
+    opacity: 1;
+}
+
+/* Button icon (using inline SVG) */
+.tex2any-copy-button svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+}
+
+/* Code block styling adjustments */
+.ltx_verbatim,
+.ltx_listing,
+.ltx_lstlisting,
+pre {
+    position: relative;
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+}
+
+/* Add extra padding to avoid overlap with button */
+.tex2any-code-wrapper .ltx_verbatim,
+.tex2any-code-wrapper .ltx_listing,
+.tex2any-code-wrapper .ltx_lstlisting,
+.tex2any-code-wrapper pre {
+    padding-right: 80px; /* Space for copy button */
+}
+
+/* Language label */
+.tex2any-code-language {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    padding: 0.25rem 0.5rem;
+    background: var(--toggle-bg, rgba(0, 0, 0, 0.05));
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-family: var(--font-mono, 'Courier New', monospace);
+    color: var(--text-color, #1a1a1a);
+    opacity: 0.6;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Dark mode adjustments */
+body[data-theme="dark"] .tex2any-copy-button {
+    background: rgba(42, 42, 42, 0.95);
+    border-color: #404040;
+    color: var(--color-text, #e4e4e4);
+}
+
+body[data-theme="dark"] .tex2any-copy-button:hover {
+    background: var(--link-color, #6ba3ff);
+    border-color: var(--link-color, #6ba3ff);
+    color: #1a1a1a;
+}
+
+body[data-theme="dark"] .tex2any-copy-button.copied {
+    background: #66bb6a;
+    border-color: #66bb6a;
+    color: #1a1a1a;
+}
+
+body[data-theme="dark"] .tex2any-code-language {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-text, #e4e4e4);
+}
+
+/* Tooltip for copy button */
+.tex2any-copy-button::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    margin-bottom: 8px;
+    padding: 0.4rem 0.6rem;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    font-size: 0.75rem;
+    border-radius: 3px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+.tex2any-copy-button:hover::before {
+    opacity: 1;
+}
+
+body[data-theme="dark"] .tex2any-copy-button::before {
+    background: rgba(255, 255, 255, 0.9);
+    color: black;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .tex2any-copy-button {
+        opacity: 1; /* Always visible on mobile */
+        padding: 0.35rem 0.6rem;
+        font-size: 0.8rem;
+    }
+
+    .tex2any-code-wrapper .ltx_verbatim,
+    .tex2any-code-wrapper .ltx_listing,
+    .tex2any-code-wrapper .ltx_lstlisting,
+    .tex2any-code-wrapper pre {
+        padding-right: 70px;
+    }
+}
+
+/* Accessibility */
+.tex2any-copy-button:focus-visible {
+    outline: 2px solid var(--link-color, #0066cc);
+    outline-offset: 2px;
+}

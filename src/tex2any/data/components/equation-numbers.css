@@ -1,0 +1,84 @@
+/* Equation Numbers Component - Automatic numbering for equations */
+/* Adds sequential numbering to LaTeXML equations */
+
+.ltx_equation {
+    position: relative;
+    margin: 1.5em 0;
+}
+
+/* Equation number container */
+.tex2any-equation-number {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.9em;
+    color: var(--text-color, #1a1a1a);
+    opacity: 0.7;
+    font-family: var(--font-mono, 'Courier New', monospace);
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Equation reference links */
+.tex2any-equation-ref {
+    color: var(--link-color, #0066cc);
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.tex2any-equation-ref:hover {
+    color: var(--link-hover-color, #0052a3);
+    text-decoration: underline;
+}
+
+/* Highlighted equation when referenced */
+.ltx_equation.highlighted {
+    background: var(--highlight-bg, rgba(255, 235, 59, 0.2));
+    padding: 0.5em;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+/* Numbered display equations */
+.ltx_equation[data-equation-number]::after {
+    content: '(' attr(data-equation-number) ')';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.9em;
+    color: var(--text-color, #1a1a1a);
+    opacity: 0.7;
+}
+
+/* Multi-line equations */
+.ltx_equationgroup .ltx_equation {
+    margin: 0.5em 0;
+}
+
+/* Dark mode adjustments */
+body[data-theme="dark"] .tex2any-equation-number {
+    color: var(--color-text, #e4e4e4);
+}
+
+body[data-theme="dark"] .ltx_equation.highlighted {
+    background: rgba(107, 163, 255, 0.15);
+}
+
+body[data-theme="dark"] .tex2any-equation-ref {
+    color: var(--link-color, #6ba3ff);
+}
+
+body[data-theme="dark"] .tex2any-equation-ref:hover {
+    color: var(--link-hover-color, #8eb8ff);
+}
+
+/* Accessibility */
+.tex2any-equation-number:focus-visible {
+    outline: 2px solid var(--link-color, #0066cc);
+    outline-offset: 2px;
+    border-radius: 2px;
+}

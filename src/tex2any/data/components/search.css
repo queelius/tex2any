@@ -1,0 +1,110 @@
+/* Search Component */
+
+.tex2any-search-container {
+    position: sticky;
+    top: 0;
+    z-index: 90;
+    background: var(--search-bg, #ffffff);
+    border-bottom: 1px solid var(--search-border, #ddd);
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.tex2any-search-box {
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.tex2any-search-input {
+    width: 100%;
+    padding: 0.75rem 2.5rem 0.75rem 1rem;
+    font-size: 1rem;
+    border: 1px solid var(--search-input-border, #ccc);
+    border-radius: 6px;
+    outline: none;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.tex2any-search-input:focus {
+    border-color: var(--search-focus-color, #0066cc);
+    box-shadow: 0 0 0 3px var(--search-focus-shadow, rgba(0, 102, 204, 0.1));
+}
+
+.tex2any-search-icon {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--search-icon-color, #666);
+    pointer-events: none;
+}
+
+.tex2any-search-clear {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--search-icon-color, #666);
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    font-size: 1.2rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.tex2any-search-input:not(:placeholder-shown) ~ .tex2any-search-clear {
+    opacity: 1;
+}
+
+.tex2any-search-clear:hover {
+    color: var(--search-clear-hover, #333);
+}
+
+.tex2any-search-results {
+    max-width: 600px;
+    margin: 1rem auto 0;
+    font-size: 0.9rem;
+    color: var(--search-results-color, #666);
+}
+
+/* Highlight matched text */
+mark.search-highlight {
+    background: var(--search-highlight-bg, #ffeb3b);
+    color: var(--search-highlight-text, #000);
+    padding: 0.1em 0.2em;
+    border-radius: 2px;
+}
+
+/* Hide non-matching content during search */
+body.searching .ltx_section:not(.search-match),
+body.searching .ltx_subsection:not(.search-match),
+body.searching .ltx_para:not(.search-match) {
+    opacity: 0.3;
+}
+
+body.searching .search-match {
+    scroll-margin-top: 100px;
+}
+
+/* Keyboard shortcut hint */
+.tex2any-search-hint {
+    position: absolute;
+    right: 3rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.75rem;
+    color: var(--search-hint-color, #999);
+    background: var(--search-hint-bg, #f5f5f5);
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    border: 1px solid var(--search-hint-border, #ddd);
+    pointer-events: none;
+}
+
+.tex2any-search-input:focus ~ .tex2any-search-hint {
+    opacity: 0;
+}

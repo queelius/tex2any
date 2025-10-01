@@ -1,0 +1,27 @@
+# Include package data
+recursive-include src/tex2any/data *.css *.js
+
+# Include documentation
+include README.md
+include LICENSE
+
+# Include configuration files
+include pyproject.toml
+
+# Exclude unnecessary files
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude __pycache__
+global-exclude .DS_Store
+global-exclude .gitignore
+global-exclude *.swp
+global-exclude *~
+
+# Exclude development files
+prune tests
+prune docs
+exclude .coverage
+exclude .pytest_cache
+exclude .mypy_cache
+exclude .tox
+exclude Makefile

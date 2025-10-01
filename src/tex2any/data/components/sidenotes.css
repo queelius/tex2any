@@ -1,0 +1,111 @@
+/* Sidenotes Component - Convert footnotes to margin notes */
+/* Tufte-style margin notes for better readability */
+
+/* Main content needs wider margins for sidenotes */
+body.has-sidenotes .ltx_document {
+    max-width: 55%;
+    margin-left: 12.5%;
+    position: relative;
+}
+
+/* Sidenote in margin */
+.tex2any-sidenote {
+    position: absolute;
+    right: -45%;
+    width: 40%;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    padding: 0.5rem 0.75rem;
+    margin-top: -0.5rem;
+    color: var(--text-color, #1a1a1a);
+    background: var(--sidenote-bg, #f9f9f9);
+    border-left: 3px solid var(--link-color, #0066cc);
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+/* Sidenote reference (superscript number) */
+.tex2any-sidenote-ref {
+    font-size: 0.75em;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+    top: -0.5em;
+    color: var(--link-color, #0066cc);
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0 0.2em;
+}
+
+.tex2any-sidenote-ref:hover {
+    color: var(--link-hover-color, #0052a3);
+    text-decoration: underline;
+}
+
+/* Hide original footnotes */
+body.has-sidenotes .ltx_note {
+    display: none;
+}
+
+/* Sidenote number */
+.tex2any-sidenote-number {
+    font-weight: 600;
+    color: var(--link-color, #0066cc);
+    margin-right: 0.5rem;
+}
+
+/* Dark mode */
+body[data-theme="dark"] .tex2any-sidenote {
+    background: var(--sidenote-bg, #2a2a2a);
+    border-left-color: var(--link-color, #6ba3ff);
+    color: var(--text-color, #e4e4e4);
+}
+
+/* Responsive: convert to inline notes on small screens */
+@media (max-width: 1280px) {
+    body.has-sidenotes .ltx_document {
+        max-width: 100%;
+        margin-left: 0;
+    }
+
+    .tex2any-sidenote {
+        position: static;
+        width: 100%;
+        margin: 1rem 0;
+        border-left-width: 4px;
+    }
+}
+
+/* Very small screens: show as collapsible footnotes */
+@media (max-width: 768px) {
+    .tex2any-sidenote {
+        font-size: 0.9rem;
+        padding: 0.75rem 1rem;
+    }
+
+    .tex2any-sidenote.collapsed {
+        display: none;
+    }
+
+    .tex2any-sidenote-ref.active {
+        background: var(--link-color, #0066cc);
+        color: white;
+        border-radius: 3px;
+        padding: 0 0.3em;
+    }
+}
+
+/* Print styles */
+@media print {
+    .tex2any-sidenote {
+        position: absolute;
+        right: -45%;
+        width: 40%;
+        font-size: 0.8rem;
+    }
+
+    body.has-sidenotes .ltx_document {
+        max-width: 55%;
+    }
+}

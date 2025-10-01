@@ -1,0 +1,57 @@
+/* Inline TOC Component */
+
+.tex2any-toc {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: var(--toc-bg, #f8f8f8);
+    border: 1px solid var(--toc-border, #e0e0e0);
+    border-radius: 8px;
+}
+
+.tex2any-toc-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    color: var(--toc-title-color, #1a1a1a);
+}
+
+.tex2any-toc ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.tex2any-toc li {
+    margin: 0.5rem 0;
+}
+
+.tex2any-toc li li {
+    padding-left: 1.5rem;
+    margin: 0.3rem 0;
+}
+
+.tex2any-toc li li li {
+    padding-left: 3rem;
+}
+
+.tex2any-toc a {
+    display: inline-block;
+    padding: 0.3rem 0;
+    color: var(--link-color, #0066cc);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.tex2any-toc a:hover {
+    color: var(--link-hover-color, #0052a3);
+    text-decoration: underline;
+}
+
+/* Number styling */
+.tex2any-toc .ltx_ref {
+    display: inline-block;
+    min-width: 2rem;
+    margin-right: 0.5rem;
+    font-weight: 500;
+    color: var(--toc-number-color, #666);
+}

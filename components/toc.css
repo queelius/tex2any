@@ -1,0 +1,118 @@
+/* TOC Component - Floating sidebar table of contents */
+
+/* Adjust body padding when TOC is present */
+body.has-floating-toc {
+    padding-left: calc(300px + 3rem);
+}
+
+/* Floating TOC sidebar */
+.ltx_TOC.floating-toc {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 280px;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 2rem 1.5rem;
+    background: var(--color-surface, #f8f9fa);
+    border-right: 1px solid var(--color-border, #e1e4e8);
+    z-index: 100;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+    margin: 0;
+    border-radius: 0;
+}
+
+.ltx_TOC.floating-toc .ltx_title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: var(--color-text-muted, #666);
+}
+
+.ltx_TOC.floating-toc ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.ltx_TOC.floating-toc li {
+    margin: 0;
+}
+
+.ltx_TOC.floating-toc li li {
+    padding-left: 1rem;
+}
+
+.ltx_TOC.floating-toc li li li {
+    padding-left: 2rem;
+}
+
+.ltx_TOC.floating-toc a {
+    display: block;
+    padding: 0.4rem 0.75rem;
+    margin: 0.15rem 0;
+    border-radius: 4px;
+    color: var(--color-text, #1a1a1a);
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    text-decoration: none;
+    border-left: 2px solid transparent;
+}
+
+.ltx_TOC.floating-toc a:hover {
+    background: var(--color-bg, #ffffff);
+    border-left-color: var(--color-accent, #0366d6);
+    text-decoration: none;
+}
+
+.ltx_TOC.floating-toc a.active {
+    background: var(--color-bg, #ffffff);
+    border-left-color: var(--color-accent, #0366d6);
+    font-weight: 600;
+}
+
+/* Smooth scrolling */
+html.has-floating-toc {
+    scroll-behavior: smooth;
+    scroll-padding-top: 2rem;
+}
+
+/* Responsive: hide TOC on small screens */
+@media (max-width: 1200px) {
+    body.has-floating-toc {
+        padding-left: 2rem;
+    }
+
+    .ltx_TOC.floating-toc {
+        display: none;
+    }
+
+    /* Show toggle button for mobile TOC */
+    .toc-mobile-toggle {
+        display: block;
+        position: fixed;
+        top: 1rem;
+        left: 1rem;
+        padding: 0.5rem 1rem;
+        background: var(--color-surface, #f8f9fa);
+        border: 1px solid var(--color-border, #e1e4e8);
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        z-index: 10001;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .ltx_TOC.floating-toc.mobile-open {
+        display: block;
+    }
+}
+
+@media (min-width: 1201px) {
+    .toc-mobile-toggle {
+        display: none;
+    }
+}
