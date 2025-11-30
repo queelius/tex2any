@@ -37,8 +37,9 @@ class TexConverter:
         'toggle': 'Light/dark mode toggle (requires JS)',
     }
 
-    def __init__(self, input_file: Path):
+    def __init__(self, input_file: Path, output_dir: Optional[Path] = None):
         self.input_file = Path(input_file)
+        self.output_dir = Path(output_dir) if output_dir else None
 
         if not self.input_file.exists():
             raise FileNotFoundError(f"Input file not found: {input_file}")
@@ -48,7 +49,7 @@ class TexConverter:
 
 
     def _get_output_path(self, format: str) -> Path:
-        """Generate output path in format-specific directory."""
+        """Generate output path in format-specific directory or custom output directory."""
         # Map format to directory name and filename
         output_configs = {
             'html': ('html', 'index.html'),
@@ -63,9 +64,13 @@ class TexConverter:
 
         dir_name, file_name = output_configs.get(format, ('output', 'document.html'))
 
-        # Create format-specific directory
-        output_dir = self.input_file.parent / dir_name
-        output_dir.mkdir(exist_ok=True)
+        # Use custom output directory if provided, otherwise use input file's parent
+        if self.output_dir:
+            output_dir = self.output_dir
+        else:
+            output_dir = self.input_file.parent / dir_name
+
+        output_dir.mkdir(parents=True, exist_ok=True)
 
         return output_dir / file_name
 
@@ -166,6 +171,7 @@ class TexConverter:
             'latexmlc',
             str(self.input_file),
             '--dest', str(output_path),
+            '--timeout=600',  # 10 minutes timeout
         ]
 
         if extra_args:
@@ -176,7 +182,8 @@ class TexConverter:
                 cmd,
                 capture_output=True,
                 text=True,
-                check=True
+                check=True,
+                timeout=900  # 15 minutes subprocess timeout
             )
 
             if result.stdout:

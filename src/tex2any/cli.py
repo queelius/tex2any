@@ -126,6 +126,12 @@ System Dependencies:
         help='Override copyright year from config'
     )
 
+    parser.add_argument(
+        '-o', '--output',
+        type=Path,
+        help='Output directory (default: creates format-specific subdirectory in input directory)'
+    )
+
     args = parser.parse_args()
 
     if args.list_formats:
@@ -188,7 +194,7 @@ System Dependencies:
             return 1
 
     try:
-        converter = TexConverter(args.input)
+        converter = TexConverter(args.input, output_dir=args.output)
         output_paths = []
 
         # Convert to each format
