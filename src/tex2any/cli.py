@@ -1,6 +1,7 @@
 """Command-line interface for tex2any."""
 
 import argparse
+import logging
 import sys
 from pathlib import Path
 
@@ -8,6 +9,7 @@ from tex2any import TexConverter, __version__
 from tex2any.themes import THEMES
 from tex2any.components import COMPONENTS
 from tex2any.config import get_config, create_default_config_file
+from tex2any.logging import setup_logging
 
 
 def main():
@@ -132,7 +134,35 @@ System Dependencies:
         help='Output directory (default: creates format-specific subdirectory in input directory)'
     )
 
+    parser.add_argument(
+        '--verbose',
+        action='store_true',
+        help='Enable verbose output (show info messages)'
+    )
+
+    parser.add_argument(
+        '--debug',
+        action='store_true',
+        help='Enable debug output (show all messages)'
+    )
+
+    parser.add_argument(
+        '-q', '--quiet',
+        action='store_true',
+        help='Suppress all output except errors'
+    )
+
     args = parser.parse_args()
+
+    # Configure logging based on verbosity flags
+    if args.debug:
+        setup_logging(level=logging.DEBUG)
+    elif args.verbose:
+        setup_logging(level=logging.INFO)
+    elif args.quiet:
+        setup_logging(level=logging.ERROR)
+    else:
+        setup_logging(level=logging.WARNING)
 
     if args.list_formats:
         print("Supported formats:")

@@ -22,7 +22,7 @@ pip install tex2any
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/tex2any.git
+git clone https://github.com/queelius/tex2any.git
 cd tex2any
 
 # Install in editable mode
@@ -167,7 +167,7 @@ for format in ["html", "markdown", "pdf"]:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/tex2any.git
+git clone https://github.com/queelius/tex2any.git
 cd tex2any
 
 # Install in editable mode with dev dependencies
@@ -232,9 +232,9 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 If you encounter any issues or have questions:
 
-- Check the [FAQ](https://github.com/yourusername/tex2any/wiki/FAQ)
-- Search [existing issues](https://github.com/yourusername/tex2any/issues)
-- Open a [new issue](https://github.com/yourusername/tex2any/issues/new)
+- Check the [FAQ](https://github.com/queelius/tex2any/wiki/FAQ)
+- Search [existing issues](https://github.com/queelius/tex2any/issues)
+- Open a [new issue](https://github.com/queelius/tex2any/issues/new)
 
 ## Roadmap
 

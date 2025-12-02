@@ -15,7 +15,7 @@ pip install -e .
 # Install with dev dependencies
 pip install -e ".[dev]"
 
-# Run tests (none currently exist)
+# Run tests
 pytest
 
 # Run tests with coverage
@@ -54,6 +54,11 @@ tex2any --list-formats
 
 # Create config file
 tex2any --init-config
+
+# Verbosity control
+tex2any document.tex --verbose  # info messages
+tex2any document.tex --debug    # all messages
+tex2any document.tex -q         # errors only
 ```
 
 ## Architecture
@@ -76,6 +81,7 @@ XML format:    .tex → latexml → .xml (no post-processing)
 | `themes.py` | `Theme` dataclass + `THEMES` registry, loads CSS from `data/themes/` |
 | `components.py` | `Component` dataclass + `COMPONENTS` registry, loads CSS/JS from `data/components/` |
 | `config.py` | TOML config from `~/.tex2any.toml`, provides defaults for theme/components/formats |
+| `logging.py` | Logging configuration, `get_logger()` for submodules |
 
 ### Theme-Component Integration
 
@@ -141,6 +147,6 @@ HTMLComposer handles structural HTML injection for positioned components (e.g., 
 
 ## Current State
 
-- **No tests exist** - tests directory needs to be created
-- Components in `COMPONENTS` registry but some CSS/JS files may be stubs
-- README.md is slightly out of date with current feature set
+- Tests exist for themes, components, and logging (~26% coverage)
+- All registered components have CSS/JS files (validated at import time)
+- `composer.py` uses regex for HTML parsing (fragile, needs replacement with `html.parser`)

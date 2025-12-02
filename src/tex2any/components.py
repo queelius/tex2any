@@ -1,5 +1,6 @@
 """Component system for tex2any - modular UI elements."""
 
+import warnings
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, Dict, List
@@ -8,6 +9,12 @@ try:
 except ImportError:
     from importlib import resources as pkg_resources
     files = None
+
+
+def _get_components_dir() -> Path:
+    """Get the components directory path."""
+    import tex2any
+    return Path(tex2any.__file__).parent / 'data' / 'components'
 
 
 @dataclass
@@ -216,3 +223,44 @@ def get_component(name: str) -> Component:
 def list_components() -> List[Component]:
     """List all available components."""
     return list(COMPONENTS.values())
+
+
+def validate_components() -> Dict[str, List[str]]:
+    """Validate that all registered components have required CSS/JS files.
+
+    Returns:
+        Dict with 'missing_css' and 'missing_js' lists (empty if all valid).
+    """
+    components_dir = _get_components_dir()
+    missing_css = []
+    missing_js = []
+
+    for name, comp in COMPONENTS.items():
+        css_file = components_dir / f'{name}.css'
+        if not css_file.exists():
+            missing_css.append(f'{name}.css')
+
+        if comp.requires_js:
+            js_file = components_dir / f'{name}.js'
+            if not js_file.exists():
+                missing_js.append(f'{name}.js')
+
+    return {'missing_css': missing_css, 'missing_js': missing_js}
+
+
+# Validate at import time (warn only, don't break)
+def _validate_on_import() -> None:
+    try:
+        result = validate_components()
+        missing = result['missing_css'] + result['missing_js']
+        if missing:
+            warnings.warn(
+                f"Missing component files: {', '.join(missing)}. "
+                "These components will fail when used.",
+                UserWarning
+            )
+    except Exception:
+        pass  # Don't break import if validation fails
+
+
+_validate_on_import()

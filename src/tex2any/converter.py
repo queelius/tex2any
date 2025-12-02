@@ -1,19 +1,13 @@
 """Core converter module for tex2any."""
 
-import re
 import subprocess
-import sys
 from pathlib import Path
 from typing import Optional, List
-try:
-    # Python 3.9+
-    from importlib.resources import files
-except ImportError:
-    # Python 3.7-3.8
-    from importlib import resources as pkg_resources
-    files = None
 
 from tex2any.composer import HTMLComposer
+from tex2any.logging import get_logger
+
+logger = get_logger('converter')
 
 
 class TexConverter:
@@ -28,13 +22,6 @@ class TexConverter:
         'txt': 'Plain text format',
         'epub': 'EPUB e-book format',
         'json': 'JSON representation',
-    }
-
-    THEMES = {
-        'clean': 'Clean minimal theme with good readability',
-        'dark': 'Dark mode theme',
-        'floating-toc': 'Sidebar with floating table of contents',
-        'toggle': 'Light/dark mode toggle (requires JS)',
     }
 
     def __init__(self, input_file: Path, output_dir: Optional[Path] = None):
@@ -187,12 +174,12 @@ class TexConverter:
             )
 
             if result.stdout:
-                print(result.stdout)
+                logger.debug("LaTeXML output:\n%s", result.stdout)
 
         except subprocess.CalledProcessError as e:
-            print(f"Error during conversion: {e}", file=sys.stderr)
+            logger.error("Error during conversion: %s", e)
             if e.stderr:
-                print(e.stderr, file=sys.stderr)
+                logger.error("LaTeXML stderr:\n%s", e.stderr)
             raise
         except FileNotFoundError:
             raise RuntimeError(
@@ -252,9 +239,9 @@ class TexConverter:
         try:
             subprocess.run(cmd, capture_output=True, text=True, check=True)
         except subprocess.CalledProcessError as e:
-            print(f"Error during XML conversion: {e}", file=sys.stderr)
+            logger.error("Error during XML conversion: %s", e)
             if e.stderr:
-                print(e.stderr, file=sys.stderr)
+                logger.error("latexml stderr:\n%s", e.stderr)
             raise
 
     def _convert_markdown(self, output_path: Path, **kwargs) -> None:
@@ -277,7 +264,7 @@ class TexConverter:
             )
         except subprocess.CalledProcessError as e:
             temp_html.unlink()
-            print(f"Error during Markdown conversion: {e}", file=sys.stderr)
+            logger.error("Error during Markdown conversion: %s", e)
             raise
 
     def _convert_txt(self, output_path: Path, **kwargs) -> None:
@@ -296,7 +283,7 @@ class TexConverter:
             raise RuntimeError("Pandoc not found. Please install pandoc.")
         except subprocess.CalledProcessError as e:
             temp_html.unlink()
-            print(f"Error during text conversion: {e}", file=sys.stderr)
+            logger.error("Error during text conversion: %s", e)
             raise
 
     def _convert_epub(self, output_path: Path, **kwargs) -> None:
@@ -315,7 +302,7 @@ class TexConverter:
             raise RuntimeError("Pandoc not found. Please install pandoc.")
         except subprocess.CalledProcessError as e:
             temp_html.unlink()
-            print(f"Error during EPUB conversion: {e}", file=sys.stderr)
+            logger.error("Error during EPUB conversion: %s", e)
             raise
 
     def _convert_json(self, output_path: Path, **kwargs) -> None:

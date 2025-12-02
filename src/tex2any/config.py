@@ -1,8 +1,11 @@
 """Configuration system for tex2any."""
 
-import os
 from pathlib import Path
 from typing import Optional, Dict, Any
+
+from tex2any.logging import get_logger
+
+logger = get_logger('config')
 
 try:
     import tomllib  # Python 3.11+
@@ -46,7 +49,10 @@ class Config:
             return
 
         if tomllib is None:
-            print(f"Warning: Cannot parse {config_path} - install 'tomli' package for Python < 3.11")
+            logger.warning(
+                "Cannot parse %s - install 'tomli' package for Python < 3.11",
+                config_path
+            )
             return
 
         try:
@@ -54,7 +60,7 @@ class Config:
                 user_config = tomllib.load(f)
                 self._merge_config(user_config)
         except Exception as e:
-            print(f"Warning: Error loading config from {config_path}: {e}")
+            logger.warning("Error loading config from %s: %s", config_path, e)
 
     def _merge_config(self, user_config: Dict[str, Any]) -> None:
         """Merge user config with defaults."""

@@ -1,5 +1,6 @@
 """Theme system for tex2any - color schemes and typography."""
 
+import warnings
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List
@@ -8,6 +9,12 @@ try:
 except ImportError:
     from importlib import resources as pkg_resources
     files = None
+
+
+def _get_themes_dir() -> Path:
+    """Get the themes directory path."""
+    import tex2any
+    return Path(tex2any.__file__).parent / 'data' / 'themes'
 
 
 @dataclass
@@ -86,3 +93,35 @@ def get_theme(name: str) -> Theme:
 def list_themes() -> List[Theme]:
     """List all available themes."""
     return list(THEMES.values())
+
+
+def validate_themes() -> List[str]:
+    """Validate that all registered themes have CSS files.
+
+    Returns:
+        List of missing theme CSS file names (empty if all valid).
+    """
+    themes_dir = _get_themes_dir()
+    missing = []
+    for name in THEMES:
+        css_file = themes_dir / f'{name}.css'
+        if not css_file.exists():
+            missing.append(f'{name}.css')
+    return missing
+
+
+# Validate at import time (warn only, don't break)
+def _validate_on_import() -> None:
+    try:
+        missing = validate_themes()
+        if missing:
+            warnings.warn(
+                f"Missing theme CSS files: {', '.join(missing)}. "
+                "These themes will fail when used.",
+                UserWarning
+            )
+    except Exception:
+        pass  # Don't break import if validation fails
+
+
+_validate_on_import()
