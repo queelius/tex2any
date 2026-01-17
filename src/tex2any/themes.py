@@ -2,19 +2,9 @@
 
 import warnings
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Dict, List
-try:
-    from importlib.resources import files
-except ImportError:
-    from importlib import resources as pkg_resources
-    files = None
 
-
-def _get_themes_dir() -> Path:
-    """Get the themes directory path."""
-    import tex2any
-    return Path(tex2any.__file__).parent / 'data' / 'themes'
+from tex2any.resources import load_package_resource, get_data_dir
 
 
 @dataclass
@@ -25,30 +15,10 @@ class Theme:
 
     def get_css(self) -> str:
         """Get theme CSS content."""
-        resource_name = f'{self.name}.css'
-
         try:
-            if files is not None:
-                # For Python 3.9+
-                resource_files = files('tex2any.data.themes')
-                resource_path = resource_files / resource_name
-                return resource_path.read_text(encoding='utf-8')
-            else:
-                # For Python 3.7-3.8
-                import pkg_resources as pkg
-                data = pkg.resource_string('tex2any', f'data/themes/{resource_name}')
-                return data.decode('utf-8')
-        except (FileNotFoundError, ModuleNotFoundError, Exception):
-            # Fallback: Try to read from the package directory directly
-            import tex2any
-            package_dir = Path(tex2any.__file__).parent
-            resource_path = package_dir / 'data' / 'themes' / resource_name
-            if resource_path.exists():
-                return resource_path.read_text(encoding='utf-8')
-
-        raise FileNotFoundError(
-            f"Theme resource not found: {self.name}.css"
-        )
+            return load_package_resource('themes', f'{self.name}.css')
+        except FileNotFoundError:
+            raise FileNotFoundError(f"Theme resource not found: {self.name}.css")
 
 
 # Theme Registry
@@ -101,7 +71,7 @@ def validate_themes() -> List[str]:
     Returns:
         List of missing theme CSS file names (empty if all valid).
     """
-    themes_dir = _get_themes_dir()
+    themes_dir = get_data_dir('themes')
     missing = []
     for name in THEMES:
         css_file = themes_dir / f'{name}.css'

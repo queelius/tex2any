@@ -247,8 +247,20 @@ System Dependencies:
                 print(f"  - {path}")
         return 0
 
-    except Exception as e:
+    except FileNotFoundError as e:
+        print(f"Error: File not found - {e}", file=sys.stderr)
+        return 1
+    except ValueError as e:
+        print(f"Error: Invalid value - {e}", file=sys.stderr)
+        return 1
+    except RuntimeError as e:
         print(f"Error: {e}", file=sys.stderr)
+        return 1
+    except KeyboardInterrupt:
+        print("\nConversion interrupted.", file=sys.stderr)
+        return 130  # Standard exit code for SIGINT
+    except OSError as e:
+        print(f"Error: System error - {e}", file=sys.stderr)
         return 1
 
 

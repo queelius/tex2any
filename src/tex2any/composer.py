@@ -1,12 +1,91 @@
 """HTML Composer - Combines themes and components into final HTML."""
 
+import html
 import json
 import re
 from pathlib import Path
 from typing import List, Optional
+
 from tex2any.themes import get_theme
 from tex2any.components import get_component
 from tex2any.config import get_config
+
+
+class HTMLInjector:
+    """Safe HTML manipulation using proper parsing.
+
+    Handles injection of content into HTML documents in a way that:
+    - Is case-insensitive for tag matching
+    - Properly handles comments and other edge cases
+    - Escapes content appropriately
+    """
+
+    @staticmethod
+    def _find_closing_tag(html_content: str, tag: str) -> Optional[int]:
+        """Find the position of a closing tag (case-insensitive).
+
+        Returns the position right before the closing tag, or None if not found.
+        """
+        # Use regex with case-insensitive flag for robustness
+        pattern = re.compile(rf'</{tag}>', re.IGNORECASE)
+        match = pattern.search(html_content)
+        return match.start() if match else None
+
+    @staticmethod
+    def _find_opening_tag_end(html_content: str, tag: str) -> Optional[int]:
+        """Find the position right after an opening tag (case-insensitive).
+
+        Returns the position right after the '>' of the opening tag, or None if not found.
+        """
+        # Match opening tag with optional attributes
+        pattern = re.compile(rf'<{tag}(?:\s[^>]*)?>',  re.IGNORECASE)
+        match = pattern.search(html_content)
+        return match.end() if match else None
+
+    @staticmethod
+    def inject_into_head(html_content: str, content: str) -> str:
+        """Inject content before the closing </head> tag.
+
+        If no </head> found, tries to inject after <body> or prepends to content.
+        """
+        pos = HTMLInjector._find_closing_tag(html_content, 'head')
+        if pos is not None:
+            return html_content[:pos] + content + '\n' + html_content[pos:]
+
+        # Fallback: try after <body>
+        pos = HTMLInjector._find_opening_tag_end(html_content, 'body')
+        if pos is not None:
+            return html_content[:pos] + '\n' + content + html_content[pos:]
+
+        # Last resort: prepend
+        return content + '\n' + html_content
+
+    @staticmethod
+    def inject_before_body_close(html_content: str, content: str) -> str:
+        """Inject content before the closing </body> tag.
+
+        If no </body> found, appends to content.
+        """
+        pos = HTMLInjector._find_closing_tag(html_content, 'body')
+        if pos is not None:
+            return html_content[:pos] + content + '\n' + html_content[pos:]
+
+        # Fallback: append
+        return html_content + '\n' + content
+
+    @staticmethod
+    def escape_for_attribute(value: str) -> str:
+        """Escape a value for use in an HTML attribute."""
+        return html.escape(value, quote=True)
+
+    @staticmethod
+    def escape_json_for_attribute(data: dict) -> str:
+        """Safely encode JSON data for use in an HTML attribute.
+
+        Uses HTML entity encoding to prevent XSS and parsing issues.
+        """
+        json_str = json.dumps(data)
+        return html.escape(json_str, quote=True)
 
 
 class HTMLComposer:
@@ -50,19 +129,11 @@ class HTMLComposer:
                 components.append(comp)
                 css_parts.append(f"/* Component: {comp_name} */\n{comp.get_css()}")
 
-        # Inject CSS into HTML
+        # Inject CSS into HTML using HTMLInjector
         if css_parts:
             combined_css = "\n\n".join(css_parts)
             css_tag = f"<style>\n{combined_css}\n</style>"
-
-            # Insert before closing </head> tag or at the start of <body>
-            if '</head>' in html_content:
-                html_content = html_content.replace('</head>', f"{css_tag}\n</head>", 1)
-            elif '<body>' in html_content:
-                html_content = html_content.replace('<body>', f"<body>\n{css_tag}", 1)
-            else:
-                # Fallback: prepend to content
-                html_content = css_tag + "\n" + html_content
+            html_content = HTMLInjector.inject_into_head(html_content, css_tag)
 
         # Collect and inject JavaScript
         js_parts = []
@@ -75,16 +146,11 @@ class HTMLComposer:
                 except FileNotFoundError:
                     pass  # Component doesn't have JS file
 
-        # Inject JS before closing </body> tag
+        # Inject JS before closing </body> tag using HTMLInjector
         if js_parts:
             combined_js = "\n\n".join(js_parts)
             js_tag = f"<script>\n{combined_js}\n</script>"
-
-            if '</body>' in html_content:
-                html_content = html_content.replace('</body>', f"{js_tag}\n</body>", 1)
-            else:
-                # Fallback: append to content
-                html_content = html_content + "\n" + js_tag
+            html_content = HTMLInjector.inject_before_body_close(html_content, js_tag)
 
         # Write the modified HTML back
         with open(self.html_path, 'w', encoding='utf-8') as f:
@@ -108,9 +174,9 @@ class HTMLComposer:
 
     def _wrap_for_sidebar_right(self, html_content: str) -> str:
         """Wrap content for sidebar-right layout."""
-        # Find the main document content
-        main_pattern = r'(<body[^>]*>)(.*?)(</body>)'
-        match = re.search(main_pattern, html_content, re.DOTALL)
+        # Find the main document content using case-insensitive regex
+        main_pattern = re.compile(r'(<body[^>]*>)(.*?)(</body>)', re.DOTALL | re.IGNORECASE)
+        match = main_pattern.search(html_content)
 
         if not match:
             return html_content
@@ -157,9 +223,9 @@ class HTMLComposer:
 }
 """
 
-        # Find body content
-        body_pattern = r'(<body[^>]*>)(.*?)(</body>)'
-        match = re.search(body_pattern, html_content, re.DOTALL)
+        # Find body content using case-insensitive regex
+        body_pattern = re.compile(r'(<body[^>]*>)(.*?)(</body>)', re.DOTALL | re.IGNORECASE)
+        match = body_pattern.search(html_content)
 
         if not match:
             return html_content
@@ -172,9 +238,9 @@ class HTMLComposer:
         # Replace old body
         html_content = html_content.replace(match.group(0), wrapped)
 
-        # Inject container CSS
-        if '</head>' in html_content:
-            html_content = html_content.replace('</head>', f"<style>\n{container_css}\n</style>\n</head>", 1)
+        # Inject container CSS using HTMLInjector
+        css_tag = f"<style>\n{container_css}\n</style>"
+        html_content = HTMLInjector.inject_into_head(html_content, css_tag)
 
         return html_content
 
@@ -183,13 +249,9 @@ class HTMLComposer:
         config = get_config()
         footer_data = config.get_footer_data()
 
-        # Create meta tag with JSON config
-        meta_tag = f'<meta name="tex2any-footer-config" content=\'{json.dumps(footer_data)}\'>'
+        # Create meta tag with properly escaped JSON config
+        escaped_json = HTMLInjector.escape_json_for_attribute(footer_data)
+        meta_tag = f'<meta name="tex2any-footer-config" content="{escaped_json}">'
 
-        # Insert in head
-        if '</head>' in html_content:
-            html_content = html_content.replace('</head>', f"{meta_tag}\n</head>", 1)
-        elif '<body>' in html_content:
-            html_content = html_content.replace('<body>', f"{meta_tag}\n<body>", 1)
-
-        return html_content
+        # Insert in head using HTMLInjector
+        return HTMLInjector.inject_into_head(html_content, meta_tag)

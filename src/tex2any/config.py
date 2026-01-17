@@ -59,8 +59,11 @@ class Config:
             with open(config_path, 'rb') as f:
                 user_config = tomllib.load(f)
                 self._merge_config(user_config)
-        except Exception as e:
-            logger.warning("Error loading config from %s: %s", config_path, e)
+        except (OSError, PermissionError) as e:
+            logger.warning("Error reading config file %s: %s", config_path, e)
+        except ValueError as e:
+            # tomllib raises ValueError for invalid TOML (TOMLDecodeError is a subclass)
+            logger.warning("Error parsing config from %s: %s", config_path, e)
 
     def _merge_config(self, user_config: Dict[str, Any]) -> None:
         """Merge user config with defaults."""

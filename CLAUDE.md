@@ -9,17 +9,17 @@ tex2any is a Python wrapper around LaTeXML that converts LaTeX documents to mult
 ## Development Commands
 
 ```bash
-# Install in editable mode
-pip install -e .
-
 # Install with dev dependencies
 pip install -e ".[dev]"
 
-# Run tests
+# Run all tests (coverage enabled by default via pyproject.toml)
 pytest
 
-# Run tests with coverage
-pytest --cov=tex2any --cov-report=html
+# Run a single test file
+pytest tests/test_components.py
+
+# Run a specific test
+pytest tests/test_components.py::TestComponent::test_get_css_returns_string -v
 
 # Format code (Black, line length 88)
 black src/
@@ -31,17 +31,13 @@ mypy src/
 flake8 src/
 ```
 
-### Manual Testing
+### CLI Testing
 
 ```bash
-# Basic conversion
+# Basic conversion (requires LaTeXML installed)
 tex2any test_document.tex
 
-# With themes
-tex2any test_document.tex --theme academic
-tex2any test_document.tex --theme dark
-
-# With components
+# With theme + components
 tex2any test_document.tex --theme academic --components floating-toc,search
 
 # Multiple output formats
@@ -50,15 +46,6 @@ tex2any test_document.tex -f html5,markdown,epub
 # List available options
 tex2any --list-themes
 tex2any --list-components
-tex2any --list-formats
-
-# Create config file
-tex2any --init-config
-
-# Verbosity control
-tex2any document.tex --verbose  # info messages
-tex2any document.tex --debug    # all messages
-tex2any document.tex -q         # errors only
 ```
 
 ## Architecture
@@ -73,15 +60,12 @@ XML format:    .tex → latexml → .xml (no post-processing)
 
 ### Core Modules
 
-| Module | Purpose |
-|--------|---------|
-| `converter.py` | `TexConverter` class wrapping LaTeXML, routes to format-specific converters |
-| `cli.py` | argparse CLI, handles multi-format output, config integration |
-| `composer.py` | `HTMLComposer` injects CSS/JS into `<head>` and `</body>`, wraps content for layouts |
-| `themes.py` | `Theme` dataclass + `THEMES` registry, loads CSS from `data/themes/` |
-| `components.py` | `Component` dataclass + `COMPONENTS` registry, loads CSS/JS from `data/components/` |
-| `config.py` | TOML config from `~/.tex2any.toml`, provides defaults for theme/components/formats |
-| `logging.py` | Logging configuration, `get_logger()` for submodules |
+- **`converter.py`** - `TexConverter` class wraps LaTeXML, routes to format-specific converters. Entry point: `convert(format, **kwargs)`.
+- **`composer.py`** - `HTMLComposer` injects CSS/JS into `<head>` and `</body>`, wraps content for layouts. Uses regex-based HTML manipulation (fragile).
+- **`themes.py`** - `Theme` dataclass + `THEMES` registry, loads CSS from `data/themes/`.
+- **`components.py`** - `Component` dataclass + `COMPONENTS` registry (23 components), loads CSS/JS from `data/components/`. Validates at import time.
+- **`config.py`** - TOML config from `~/.tex2any.toml`, provides defaults. Global instance via `get_config()`.
+- **`cli.py`** - argparse CLI, handles multi-format output, integrates config defaults.
 
 ### Theme-Component Integration
 
@@ -94,13 +78,11 @@ Themes define CSS variables; components consume them:
 .floating-toc { background: var(--toc-bg, #f8f8f8); }
 ```
 
-This allows any theme to work with any component combination.
-
 ### Component Layout Positions
 
-Components have `layout_position` attribute: `'left'`, `'right'`, `'header'`, `'footer'`, or `None` (inline).
+Components have `layout_position`: `'left'`, `'right'`, `'header'`, `'footer'`, or `None` (inline).
 
-HTMLComposer handles structural HTML injection for positioned components (e.g., wrapping content in `<main>` + `<aside>` for `sidebar-right`).
+`HTMLComposer.inject_html_elements()` adds structural HTML for positioned components (e.g., wrapping content in `<main>` + `<aside>` for `sidebar-right`).
 
 ## System Dependencies
 
@@ -111,42 +93,23 @@ HTMLComposer handles structural HTML injection for positioned components (e.g., 
 ## Adding Themes
 
 1. Create `src/tex2any/data/themes/yourtheme.css`
-2. Define CSS variables for component integration:
-   ```css
-   :root {
-       --link-color: ...; --toc-bg: ...; --header-bg: ...;
-       --footer-bg: ...; --sidebar-bg: ...; --text-color: ...;
-   }
-   ```
-3. Register in `themes.py`:
-   ```python
-   THEMES['yourtheme'] = Theme(name='yourtheme', description='...')
-   ```
+2. Define CSS variables for component integration (see existing themes for expected variables)
+3. Register in `themes.py`: `THEMES['yourtheme'] = Theme(name='yourtheme', description='...')`
 
 ## Adding Components
 
-1. Create `src/tex2any/data/components/yourcomp.css`
-2. Create `src/tex2any/data/components/yourcomp.js` (if interactive)
-3. Use theme CSS variables for styling
-4. Register in `components.py`:
-   ```python
-   COMPONENTS['yourcomp'] = Component(
-       name='yourcomp',
-       description='...',
-       requires_js=True,
-       layout_position='left'  # or 'right', 'header', 'footer', None
-   )
-   ```
+1. Create `src/tex2any/data/components/yourcomp.css` (required)
+2. Create `src/tex2any/data/components/yourcomp.js` (if `requires_js=True`)
+3. Register in `components.py` with `layout_position` if needed
+4. Component validation runs at import time—missing files will warn
 
 ## Key Implementation Details
 
 - **Zero Python runtime dependencies**: Uses only stdlib, delegates to external tools
 - **Python 3.7+ compatibility**: Uses `importlib.resources` with fallback for older Python
-- **Component filtering**: Non-HTML formats automatically filter out HTML-only components (e.g., `floating-toc` becomes `toc` for markdown)
+- **Component filtering**: Non-HTML formats automatically filter out HTML-only components in `_filter_components_for_format()` (e.g., `floating-toc` becomes `toc` for markdown)
 - **Config precedence**: CLI args > `~/.tex2any.toml` > hardcoded defaults
 
-## Current State
+## Known Issues
 
-- Tests exist for themes, components, and logging (~26% coverage)
-- All registered components have CSS/JS files (validated at import time)
-- `composer.py` uses regex for HTML parsing (fragile, needs replacement with `html.parser`)
+- `composer.py` uses regex for HTML manipulation (fragile, should use `html.parser`)

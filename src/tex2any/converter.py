@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Optional, List
 
 from tex2any.composer import HTMLComposer
+from tex2any.components import get_component
 from tex2any.logging import get_logger
 
 logger = get_logger('converter')
@@ -109,17 +110,17 @@ class TexConverter:
         if not components:
             return components
 
-        # Components that only work in HTML (require JavaScript/interactivity)
-        html_only_components = {
-            'floating-toc', 'search', 'theme-toggle', 'back-to-top',
-            'share-buttons', 'citation-generator', 'reading-progress',
-            'sidebar-right', 'equation-numbers', 'copy-code', 'document-stats',
-            'reading-time', 'footer'
-        }
-
-        # For non-HTML formats, filter out HTML-only components
+        # For non-HTML formats, filter out HTML-only components using the component's html_only property
         if format not in ['html', 'html5', 'xhtml']:
-            filtered = [c for c in components if c not in html_only_components]
+            filtered = []
+            for comp_name in components:
+                try:
+                    comp = get_component(comp_name)
+                    if not comp.html_only:
+                        filtered.append(comp_name)
+                except ValueError:
+                    # Unknown component, skip it
+                    pass
 
             # Replace floating-toc with inline toc for markdown/epub
             if 'floating-toc' in components and format in ['markdown', 'epub']:
@@ -176,6 +177,12 @@ class TexConverter:
             if result.stdout:
                 logger.debug("LaTeXML output:\n%s", result.stdout)
 
+        except subprocess.TimeoutExpired as e:
+            logger.error("LaTeXML timed out after %s seconds", e.timeout)
+            raise RuntimeError(
+                f"LaTeXML conversion timed out after {e.timeout} seconds. "
+                "Try simplifying the document or increasing the timeout."
+            )
         except subprocess.CalledProcessError as e:
             logger.error("Error during conversion: %s", e)
             if e.stderr:
@@ -189,9 +196,15 @@ class TexConverter:
                 "  Or see: https://dlmf.nist.gov/LaTeXML/get.html"
             )
 
-    def _convert_html(self, output_path: Path, **kwargs) -> None:
-        """Convert to standard HTML."""
-        extra_args = ['--format=html']
+    def _convert_html_format(self, output_path: Path, format_name: str, **kwargs) -> None:
+        """Convert to an HTML-based format.
+
+        Args:
+            output_path: Path to write the output file.
+            format_name: LaTeXML format name ('html', 'html5', 'xhtml').
+            **kwargs: Additional options (css, no_default_css).
+        """
+        extra_args = [f'--format={format_name}']
 
         # Handle custom CSS (not theme CSS - that's handled by composer)
         if kwargs.get('css'):
@@ -202,34 +215,18 @@ class TexConverter:
             extra_args.append('--nodefaultcss')
 
         self._run_latexml(output_path, extra_args)
+
+    def _convert_html(self, output_path: Path, **kwargs) -> None:
+        """Convert to standard HTML."""
+        self._convert_html_format(output_path, 'html', **kwargs)
 
     def _convert_html5(self, output_path: Path, **kwargs) -> None:
         """Convert to HTML5."""
-        extra_args = ['--format=html5']
-
-        # Handle custom CSS (not theme CSS - that's handled by composer)
-        if kwargs.get('css'):
-            extra_args.extend(['--css', kwargs['css']])
-
-        # Disable default CSS if requested
-        if kwargs.get('no_default_css'):
-            extra_args.append('--nodefaultcss')
-
-        self._run_latexml(output_path, extra_args)
+        self._convert_html_format(output_path, 'html5', **kwargs)
 
     def _convert_xhtml(self, output_path: Path, **kwargs) -> None:
         """Convert to XHTML."""
-        extra_args = ['--format=xhtml']
-
-        # Handle custom CSS (not theme CSS - that's handled by composer)
-        if kwargs.get('css'):
-            extra_args.extend(['--css', kwargs['css']])
-
-        # Disable default CSS if requested
-        if kwargs.get('no_default_css'):
-            extra_args.append('--nodefaultcss')
-
-        self._run_latexml(output_path, extra_args)
+        self._convert_html_format(output_path, 'xhtml', **kwargs)
 
     def _convert_xml(self, output_path: Path, **kwargs) -> None:
         """Convert to LaTeXML XML (intermediate format)."""
@@ -237,73 +234,68 @@ class TexConverter:
         cmd = ['latexml', str(self.input_file), '--dest', str(output_path)]
 
         try:
-            subprocess.run(cmd, capture_output=True, text=True, check=True)
+            subprocess.run(cmd, capture_output=True, text=True, check=True, timeout=900)
+        except subprocess.TimeoutExpired as e:
+            logger.error("latexml timed out after %s seconds", e.timeout)
+            raise RuntimeError(
+                f"latexml conversion timed out after {e.timeout} seconds."
+            )
         except subprocess.CalledProcessError as e:
             logger.error("Error during XML conversion: %s", e)
             if e.stderr:
                 logger.error("latexml stderr:\n%s", e.stderr)
             raise
-
-    def _convert_markdown(self, output_path: Path, **kwargs) -> None:
-        """Convert to Markdown (via HTML and pandoc)."""
-        # First convert to HTML
-        temp_html = output_path.with_suffix('.tmp.html')
-        self._convert_html(temp_html)
-
-        # Then use pandoc to convert HTML to Markdown
-        try:
-            cmd = ['pandoc', str(temp_html), '-o', str(output_path)]
-            subprocess.run(cmd, capture_output=True, text=True, check=True)
-            temp_html.unlink()  # Clean up temp file
         except FileNotFoundError:
-            temp_html.unlink()
+            raise RuntimeError(
+                "LaTeXML not found. Please install LaTeXML:\n"
+                "  Ubuntu/Debian: sudo apt-get install latexml\n"
+                "  macOS: brew install latexml"
+            )
+
+    def _convert_via_pandoc(self, output_path: Path, pandoc_args: List[str], format_name: str) -> None:
+        """Convert to a format via HTML and pandoc.
+
+        Args:
+            output_path: Path to write the output file.
+            pandoc_args: Additional arguments for pandoc (e.g., ['-t', 'plain']).
+            format_name: Human-readable format name for error messages.
+        """
+        temp_html = output_path.with_suffix('.tmp.html')
+        try:
+            # First convert to HTML
+            self._convert_html(temp_html)
+
+            # Then use pandoc to convert HTML to target format
+            cmd = ['pandoc', str(temp_html)] + pandoc_args + ['-o', str(output_path)]
+            subprocess.run(cmd, capture_output=True, text=True, check=True, timeout=300)
+        except subprocess.TimeoutExpired as e:
+            logger.error("Pandoc timed out after %s seconds", e.timeout)
+            raise RuntimeError(
+                f"Pandoc conversion to {format_name} timed out after {e.timeout} seconds."
+            )
+        except FileNotFoundError:
             raise RuntimeError(
                 "Pandoc not found. Please install pandoc:\n"
                 "  Ubuntu/Debian: sudo apt-get install pandoc\n"
                 "  macOS: brew install pandoc"
             )
         except subprocess.CalledProcessError as e:
-            temp_html.unlink()
-            logger.error("Error during Markdown conversion: %s", e)
+            logger.error("Error during %s conversion: %s", format_name, e)
             raise
+        finally:
+            temp_html.unlink(missing_ok=True)
+
+    def _convert_markdown(self, output_path: Path, **kwargs) -> None:
+        """Convert to Markdown (via HTML and pandoc)."""
+        self._convert_via_pandoc(output_path, [], 'Markdown')
 
     def _convert_txt(self, output_path: Path, **kwargs) -> None:
         """Convert to plain text (via HTML and pandoc)."""
-        # First convert to HTML
-        temp_html = output_path.with_suffix('.tmp.html')
-        self._convert_html(temp_html)
-
-        # Then use pandoc to convert HTML to plain text
-        try:
-            cmd = ['pandoc', str(temp_html), '-t', 'plain', '-o', str(output_path)]
-            subprocess.run(cmd, capture_output=True, text=True, check=True)
-            temp_html.unlink()
-        except FileNotFoundError:
-            temp_html.unlink()
-            raise RuntimeError("Pandoc not found. Please install pandoc.")
-        except subprocess.CalledProcessError as e:
-            temp_html.unlink()
-            logger.error("Error during text conversion: %s", e)
-            raise
+        self._convert_via_pandoc(output_path, ['-t', 'plain'], 'plain text')
 
     def _convert_epub(self, output_path: Path, **kwargs) -> None:
         """Convert to EPUB e-book format."""
-        # First convert to HTML
-        temp_html = output_path.with_suffix('.tmp.html')
-        self._convert_html(temp_html)
-
-        # Then use pandoc to convert HTML to EPUB
-        try:
-            cmd = ['pandoc', str(temp_html), '-o', str(output_path)]
-            subprocess.run(cmd, capture_output=True, text=True, check=True)
-            temp_html.unlink()
-        except FileNotFoundError:
-            temp_html.unlink()
-            raise RuntimeError("Pandoc not found. Please install pandoc.")
-        except subprocess.CalledProcessError as e:
-            temp_html.unlink()
-            logger.error("Error during EPUB conversion: %s", e)
-            raise
+        self._convert_via_pandoc(output_path, [], 'EPUB')
 
     def _convert_json(self, output_path: Path, **kwargs) -> None:
         """Convert to JSON representation."""
