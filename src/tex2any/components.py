@@ -2,19 +2,9 @@
 
 import warnings
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Optional, Dict, List
-try:
-    from importlib.resources import files
-except ImportError:
-    from importlib import resources as pkg_resources
-    files = None
 
-
-def _get_components_dir() -> Path:
-    """Get the components directory path."""
-    import tex2any
-    return Path(tex2any.__file__).parent / 'data' / 'components'
+from tex2any.resources import load_package_resource, get_data_dir
 
 
 @dataclass
@@ -24,6 +14,7 @@ class Component:
     description: str
     requires_js: bool = False
     layout_position: Optional[str] = None  # 'left', 'right', 'header', 'footer', None
+    html_only: bool = True  # Whether this component only works in HTML formats
 
     def get_css(self) -> str:
         """Get component CSS content."""
@@ -37,34 +28,12 @@ class Component:
 
     def _load_resource(self, resource_type: str) -> str:
         """Load resource from package data."""
-        resource_name = f'{self.name}.{resource_type}'
-
         try:
-            if files is not None:
-                # For Python 3.9+
-                resource_files = files('tex2any.data.components')
-                resource_path = resource_files / resource_name
-                return resource_path.read_text(encoding='utf-8')
-            else:
-                # For Python 3.7-3.8
-                import pkg_resources as pkg
-                data = pkg.resource_string('tex2any', f'data/components/{resource_name}')
-                return data.decode('utf-8')
-        except (FileNotFoundError, ModuleNotFoundError, Exception):
-            # Fallback: Try to read from the package directory directly
-            import tex2any
-            package_dir = Path(tex2any.__file__).parent
-            resource_path = package_dir / 'data' / 'components' / resource_name
-            if resource_path.exists():
-                return resource_path.read_text(encoding='utf-8')
-
-        raise FileNotFoundError(
-            f"Component resource not found: {self.name}.{resource_type}"
-        )
-
-    def get_html_injection(self) -> Optional[str]:
-        """Get HTML to inject into the document (e.g., for search bar, header)."""
-        return None
+            return load_package_resource('components', f'{self.name}.{resource_type}')
+        except FileNotFoundError:
+            raise FileNotFoundError(
+                f"Component resource not found: {self.name}.{resource_type}"
+            )
 
 
 # Component Registry
@@ -73,7 +42,8 @@ COMPONENTS: Dict[str, Component] = {
         name='toc',
         description='Inline table of contents',
         requires_js=True,
-        layout_position=None
+        layout_position=None,
+        html_only=False  # Can work in markdown/epub via pandoc
     ),
     'floating-toc': Component(
         name='floating-toc',
@@ -207,6 +177,13 @@ COMPONENTS: Dict[str, Component] = {
         requires_js=True,
         layout_position=None
     ),
+    'math-preview': Component(
+        name='math-preview',
+        description='Hover preview tooltips for equation references',
+        requires_js=True,
+        layout_position=None,
+        html_only=True
+    ),
 }
 
 
@@ -231,7 +208,7 @@ def validate_components() -> Dict[str, List[str]]:
     Returns:
         Dict with 'missing_css' and 'missing_js' lists (empty if all valid).
     """
-    components_dir = _get_components_dir()
+    components_dir = get_data_dir('components')
     missing_css = []
     missing_js = []
 

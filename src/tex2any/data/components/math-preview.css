@@ -1,0 +1,245 @@
+/* Math Preview Component */
+/* Hover preview tooltips for equation references */
+
+/* Preview container */
+.tex2any-math-preview {
+    position: absolute;
+    z-index: 10000;
+    background: var(--toggle-bg, white);
+    border: 1px solid var(--toggle-border, #d0d0d0);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    max-width: 500px;
+    min-width: 200px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-out, visibility 0.2s ease-out;
+    pointer-events: none;
+}
+
+.tex2any-math-preview.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    animation: mathPreviewFadeIn 0.2s ease-out;
+}
+
+@keyframes mathPreviewFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Preview header with equation label */
+.tex2any-math-preview-header {
+    font-weight: 600;
+    color: var(--text-color-muted, #666);
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--toggle-border, #e0e0e0);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Preview content - the equation itself */
+.tex2any-math-preview-content {
+    color: var(--text-color, #1a1a1a);
+    overflow: hidden;
+    max-height: 250px;
+    overflow-y: auto;
+    text-align: center;
+}
+
+/* Style equations inside preview */
+.tex2any-math-preview-content .ltx_equation,
+.tex2any-math-preview-content .ltx_equationgroup,
+.tex2any-math-preview-content .ltx_Math {
+    margin: 0.5rem 0;
+}
+
+/* Remove equation numbers in preview (redundant) */
+.tex2any-math-preview-content .ltx_tag,
+.tex2any-math-preview-content .ltx_tag_equation {
+    display: none;
+}
+
+/* Arrow pointer - default pointing down (preview above link) */
+.tex2any-math-preview::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 30px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid var(--toggle-border, #d0d0d0);
+}
+
+.tex2any-math-preview::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 31px;
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 7px solid var(--toggle-bg, white);
+}
+
+/* Arrow pointing up (preview below link) */
+.tex2any-math-preview.below::before {
+    top: auto;
+    bottom: 100%;
+    border-top: none;
+    border-bottom: 8px solid var(--toggle-border, #d0d0d0);
+}
+
+.tex2any-math-preview.below::after {
+    top: auto;
+    bottom: 100%;
+    border-top: none;
+    border-bottom: 7px solid var(--toggle-bg, white);
+}
+
+/* Equation reference link styling */
+a.tex2any-equation-ref,
+a[href^="#eq-"],
+a[href^="#E"],
+a.ltx_ref[href*="eq"],
+a.ltx_ref[href*="eqn"] {
+    position: relative;
+    color: var(--link-color, #0066cc);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--link-color, #0066cc);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+a.tex2any-equation-ref:hover,
+a[href^="#eq-"]:hover,
+a[href^="#E"]:hover,
+a.ltx_ref[href*="eq"]:hover,
+a.ltx_ref[href*="eqn"]:hover {
+    color: var(--link-color-hover, #0052a3);
+    border-bottom-style: solid;
+}
+
+/* Subtle indicator for equation refs */
+a.tex2any-equation-ref::before,
+a[href^="#eq-"]::before,
+a[href^="#E"]::before {
+    content: '';
+    display: inline-block;
+    width: 0.6em;
+    height: 0.6em;
+    margin-right: 0.15em;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230066cc'%3E%3Cpath d='M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.6;
+    vertical-align: middle;
+}
+
+/* Dark mode */
+body[data-theme="dark"] .tex2any-math-preview {
+    background: var(--color-surface, #2a2a2a);
+    border-color: var(--color-border, #404040);
+}
+
+body[data-theme="dark"] .tex2any-math-preview::before {
+    border-top-color: var(--color-border, #404040);
+}
+
+body[data-theme="dark"] .tex2any-math-preview::after {
+    border-top-color: var(--color-surface, #2a2a2a);
+}
+
+body[data-theme="dark"] .tex2any-math-preview.below::before {
+    border-top-color: transparent;
+    border-bottom-color: var(--color-border, #404040);
+}
+
+body[data-theme="dark"] .tex2any-math-preview.below::after {
+    border-top-color: transparent;
+    border-bottom-color: var(--color-surface, #2a2a2a);
+}
+
+body[data-theme="dark"] .tex2any-math-preview-header {
+    color: var(--color-text-muted, #999);
+    border-bottom-color: var(--color-border, #404040);
+}
+
+body[data-theme="dark"] .tex2any-math-preview-content {
+    color: var(--color-text, #e4e4e4);
+}
+
+body[data-theme="dark"] a.tex2any-equation-ref::before,
+body[data-theme="dark"] a[href^="#eq-"]::before,
+body[data-theme="dark"] a[href^="#E"]::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2388c0d0'%3E%3Cpath d='M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z'/%3E%3C/svg%3E");
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .tex2any-math-preview {
+        max-width: calc(100vw - 40px);
+        left: 20px !important;
+        right: 20px;
+        font-size: 0.9rem;
+    }
+
+    .tex2any-math-preview::before,
+    .tex2any-math-preview::after {
+        display: none; /* Hide arrow on mobile for simpler layout */
+    }
+}
+
+/* Accessibility */
+a.tex2any-equation-ref:focus-visible,
+a[href^="#eq-"]:focus-visible,
+a[href^="#E"]:focus-visible {
+    outline: 2px solid var(--link-color, #0066cc);
+    outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+    .tex2any-math-preview {
+        display: none !important;
+    }
+
+    a.tex2any-equation-ref::before,
+    a[href^="#eq-"]::before,
+    a[href^="#E"]::before {
+        display: none;
+    }
+}
+
+/* Scrollbar styling for preview content */
+.tex2any-math-preview-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.tex2any-math-preview-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.tex2any-math-preview-content::-webkit-scrollbar-thumb {
+    background: var(--toggle-border, #d0d0d0);
+    border-radius: 3px;
+}
+
+.tex2any-math-preview-content::-webkit-scrollbar-thumb:hover {
+    background: var(--text-color-muted, #999);
+}

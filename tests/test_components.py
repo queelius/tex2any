@@ -99,3 +99,56 @@ class TestComponentLayoutPosition:
             assert comp.layout_position in valid_positions, (
                 f"Component {name} has invalid layout_position: {comp.layout_position}"
             )
+
+
+class TestMathPreviewComponent:
+    """Tests for the math-preview component."""
+
+    def test_math_preview_registered(self):
+        """math-preview component should be in the registry."""
+        assert 'math-preview' in COMPONENTS
+
+    def test_math_preview_properties(self):
+        """math-preview should have correct properties."""
+        comp = get_component('math-preview')
+        assert comp.name == 'math-preview'
+        assert comp.requires_js is True
+        assert comp.layout_position is None
+        assert comp.html_only is True
+
+    def test_math_preview_loads_css(self):
+        """math-preview should load its CSS file."""
+        comp = get_component('math-preview')
+        css = comp.get_css()
+        assert isinstance(css, str)
+        assert len(css) > 0
+        assert 'tex2any-math-preview' in css
+
+    def test_math_preview_loads_js(self):
+        """math-preview should load its JS file."""
+        comp = get_component('math-preview')
+        js = comp.get_js()
+        assert isinstance(js, str)
+        assert len(js) > 0
+        assert 'initMathPreview' in js
+
+    def test_math_preview_css_has_dark_mode(self):
+        """math-preview CSS should include dark mode support."""
+        comp = get_component('math-preview')
+        css = comp.get_css()
+        assert 'body[data-theme="dark"]' in css
+
+    def test_math_preview_css_has_responsive_styles(self):
+        """math-preview CSS should include responsive styles."""
+        comp = get_component('math-preview')
+        css = comp.get_css()
+        assert '@media' in css
+
+    def test_math_preview_js_handles_equation_selectors(self):
+        """math-preview JS should handle common equation reference patterns."""
+        comp = get_component('math-preview')
+        js = comp.get_js()
+        # Check for expected selectors
+        assert '#eq-' in js
+        assert '#E' in js
+        assert 'ltx_equation' in js
