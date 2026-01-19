@@ -22,7 +22,7 @@ Supported formats:
 {chr(10).join(f"  {fmt:12s} - {desc}" for fmt, desc in TexConverter.SUPPORTED_FORMATS.items())}
 
 Available themes:
-{chr(10).join(f"  {theme:15s} - {desc}" for theme, desc in THEMES.items())}
+{chr(10).join(f"  {theme:15s} - {desc.description}" for theme, desc in THEMES.items())}
 
 Available components:
 {chr(10).join(f"  {comp:15s} - {desc}" for comp, desc in [(k, v.description) for k, v in COMPONENTS.items()])}
