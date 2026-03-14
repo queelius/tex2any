@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-tex2any is a Python wrapper around LaTeXML that converts LaTeX documents to multiple formats (HTML, Markdown, EPUB, plain text, etc.). Features a modular **theme + component system** that separates styling from functionality, enabling rich, interactive HTML documents.
+tex2html is a Python wrapper around LaTeXML that converts LaTeX documents to HTML (and other formats via pandoc). Features a filesystem-based **theme + component system** where themes provide CSS variables and components add interactive functionality (CSS + optional JS). Zero Python runtime dependencies — uses only stdlib and delegates to external tools (LaTeXML, pandoc).
+
+The primary consumer is `mf papers process`, which calls `tex2html {file} -f html5 -o {output_dir}`.
 
 ## Development Commands
 
@@ -19,7 +21,7 @@ pytest
 pytest tests/test_components.py
 
 # Run a specific test
-pytest tests/test_components.py::TestComponent::test_get_css_returns_string -v
+pytest tests/test_components.py::TestLoad::test_loads_css -v
 
 # Format code (Black, line length 88)
 black src/
@@ -35,17 +37,14 @@ flake8 src/
 
 ```bash
 # Basic conversion (requires LaTeXML installed)
-tex2any test_document.tex
+tex2html document.tex
 
 # With theme + components
-tex2any test_document.tex --theme academic --components floating-toc,search
-
-# Multiple output formats
-tex2any test_document.tex -f html5,markdown,epub
+tex2html document.tex --theme academic -c dark-mode,floating-toc
 
 # List available options
-tex2any --list-themes
-tex2any --list-components
+tex2html --list-themes
+tex2html --list-components
 ```
 
 ## Architecture
@@ -53,63 +52,42 @@ tex2any --list-components
 ### Conversion Pipeline
 
 ```
-HTML formats:  .tex → latexmlc → .html → HTMLComposer (theme + components) → final .html
+HTML formats:  .tex → latexmlc → .html → compose() (theme + components) → final .html
 Other formats: .tex → latexmlc → .html → pandoc → .md/.txt/.epub
 XML format:    .tex → latexml → .xml (no post-processing)
 ```
 
 ### Core Modules
 
-- **`converter.py`** - `TexConverter` class wraps LaTeXML, routes to format-specific converters. Entry point: `convert(format, **kwargs)`.
-- **`composer.py`** - `HTMLComposer` injects CSS/JS into `<head>` and `</body>`, wraps content for layouts. Uses regex-based HTML manipulation (fragile).
-- **`themes.py`** - `Theme` dataclass + `THEMES` registry, loads CSS from `data/themes/`.
-- **`components.py`** - `Component` dataclass + `COMPONENTS` registry (23 components), loads CSS/JS from `data/components/`. Validates at import time.
-- **`config.py`** - TOML config from `~/.tex2any.toml`, provides defaults. Global instance via `get_config()`.
-- **`cli.py`** - argparse CLI, handles multi-format output, integrates config defaults.
+- **`converter.py`** — `TexConverter` class wraps LaTeXML, routes to format-specific converters via `_FORMAT_DISPATCH` table. Entry point: `convert(format, **kwargs)`. After HTML conversion, calls `compose()` to inject theme/components.
+- **`composer.py`** — Free functions (`compose()`, `inject_into_head()`, `inject_before_body_close()`) that modify HTML in-place on disk. Uses regex to find `</head>` and `</body>` insertion points. Special handling: `dark-mode` component gets an early inline script to prevent flash of unstyled content.
+- **`themes.py`** — Auto-discovers themes from `data/themes/*.css`. Each `.css` file becomes a `Theme` entry, with description parsed from the first CSS comment. No manual registration needed.
+- **`components.py`** — Auto-discovers components from `data/components/*.css`. A component = required `.css` + optional `.js`. Supports an `extra_dir` that shadows built-in components. Path traversal is rejected.
+- **`cli.py`** — argparse CLI. Validates component names against available set before starting conversion.
+
+### Auto-Discovery Pattern
+
+Both themes and components use filesystem-based auto-discovery — no registry to maintain. Adding a new theme or component is just adding files:
+
+**New theme:** Create `src/tex2html/data/themes/mytheme.css` with a `/* Description */` first-line comment. It appears automatically in `--list-themes` and `--theme` choices.
+
+**New component:** Create `src/tex2html/data/components/mycomp.css` (and optionally `mycomp.js`). It appears automatically in `--list-components` and can be used with `-c mycomp`.
 
 ### Theme-Component Integration
 
-Themes define CSS variables; components consume them:
+Themes define CSS variables; components consume them with fallback defaults:
 ```css
-/* Theme defines */
-:root { --link-color: #0066cc; --toc-bg: #f8f8f8; }
-
-/* Component uses */
-.floating-toc { background: var(--toc-bg, #f8f8f8); }
+/* Theme defines */   :root { --toc-bg: #f8f8f8; }
+/* Component uses */  .floating-toc { background: var(--toc-bg, #f8f8f8); }
 ```
-
-### Component Layout Positions
-
-Components have `layout_position`: `'left'`, `'right'`, `'header'`, `'footer'`, or `None` (inline).
-
-`HTMLComposer.inject_html_elements()` adds structural HTML for positioned components (e.g., wrapping content in `<main>` + `<aside>` for `sidebar-right`).
 
 ## System Dependencies
 
 - **LaTeXML** (required): `sudo apt-get install latexml` or `brew install latexml`
 - **Pandoc** (optional, for markdown/txt/epub): `sudo apt-get install pandoc`
-- **tomli** (optional, for config on Python < 3.11): `pip install tomli`
 
-## Adding Themes
+## Key Constraints
 
-1. Create `src/tex2any/data/themes/yourtheme.css`
-2. Define CSS variables for component integration (see existing themes for expected variables)
-3. Register in `themes.py`: `THEMES['yourtheme'] = Theme(name='yourtheme', description='...')`
-
-## Adding Components
-
-1. Create `src/tex2any/data/components/yourcomp.css` (required)
-2. Create `src/tex2any/data/components/yourcomp.js` (if `requires_js=True`)
-3. Register in `components.py` with `layout_position` if needed
-4. Component validation runs at import time—missing files will warn
-
-## Key Implementation Details
-
-- **Zero Python runtime dependencies**: Uses only stdlib, delegates to external tools
-- **Python 3.7+ compatibility**: Uses `importlib.resources` with fallback for older Python
-- **Component filtering**: Non-HTML formats automatically filter out HTML-only components in `_filter_components_for_format()` (e.g., `floating-toc` becomes `toc` for markdown)
-- **Config precedence**: CLI args > `~/.tex2any.toml` > hardcoded defaults
-
-## Known Issues
-
+- **Python ≥ 3.10** — uses `X | None` union syntax
+- **Zero runtime dependencies** — stdlib only
 - `composer.py` uses regex for HTML manipulation (fragile, should use `html.parser`)

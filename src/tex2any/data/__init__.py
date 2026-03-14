@@ -1,1 +1,0 @@
-"""Data package for tex2any."""

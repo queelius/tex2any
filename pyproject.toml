@@ -3,11 +3,11 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "tex2any"
+name = "tex2html"
 version = "0.2.0"
-description = "Convert LaTeX files to various formats using LaTeXML"
+description = "Convert LaTeX documents to HTML using LaTeXML with theme and component support"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [
     {name = "Alex Towell", email = "lex@metafunctor.com"},
@@ -34,12 +34,10 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Documentation",
     "Topic :: Software Development :: Documentation",
     "Topic :: Text Processing :: Markup :: LaTeX",
@@ -66,23 +64,23 @@ test = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/queelius/tex2any"
-Documentation = "https://github.com/queelius/tex2any#readme"
-Repository = "https://github.com/queelius/tex2any.git"
-"Bug Tracker" = "https://github.com/queelius/tex2any/issues"
+Homepage = "https://github.com/queelius/tex2html"
+Documentation = "https://github.com/queelius/tex2html#readme"
+Repository = "https://github.com/queelius/tex2html.git"
+"Bug Tracker" = "https://github.com/queelius/tex2html/issues"
 
 [project.scripts]
-tex2any = "tex2any.cli:main"
+tex2html = "tex2html.cli:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["tex2any*"]
+include = ["tex2html*"]
 
 [tool.setuptools.package-data]
-tex2any = [
+tex2html = [
     "data/themes/*.css",
     "data/themes/*.js",
     "data/components/*.css",
@@ -91,7 +89,7 @@ tex2any = [
 
 [tool.black]
 line-length = 88
-target-version = ['py37', 'py38', 'py39', 'py310', 'py311', 'py312']
+target-version = ['py310', 'py311', 'py312']
 include = '\.pyi?$'
 
 [tool.isort]
@@ -99,7 +97,7 @@ profile = "black"
 line_length = 88
 
 [tool.mypy]
-python_version = "3.7"
+python_version = "3.10"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
@@ -110,14 +108,14 @@ python_files = ["test_*.py", "*_test.py"]
 addopts = [
     "-ra",
     "--strict-markers",
-    "--cov=tex2any",
+    "--cov=tex2html",
     "--cov-report=term-missing",
     "--cov-report=html",
 ]
 
 [tool.coverage.run]
 branch = true
-source = ["src/tex2any"]
+source = ["src/tex2html"]
 
 [tool.coverage.report]
 exclude_lines = [

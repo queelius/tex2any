@@ -1,0 +1,76 @@
+/* Collapsible Proofs Component
+ *
+ * Adds toggle buttons to LaTeXML proof elements.
+ * No toolbar, no localStorage, no keyboard hints — just toggle.
+ */
+
+/* Proof container */
+.ltx_proof {
+    position: relative;
+    margin: 1.5rem 0;
+    padding: 1rem 1rem 1rem 1.25rem;
+    background: var(--code-bg, #f8f8f8);
+    border-left: 3px solid var(--link-color, #0066cc);
+    border-radius: 4px;
+}
+
+/* Toggle button */
+.proof-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.6rem;
+    margin-bottom: 0.5rem;
+    background: transparent;
+    border: 1px solid var(--border-color, #d0d0d0);
+    border-radius: 4px;
+    font-size: 0.82rem;
+    color: var(--text-color-muted, #666);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.proof-toggle:hover {
+    background: var(--link-color, #0066cc);
+    border-color: var(--link-color, #0066cc);
+    color: #fff;
+}
+
+.proof-toggle:focus-visible {
+    outline: 2px solid var(--link-color, #0066cc);
+    outline-offset: 2px;
+}
+
+.proof-toggle svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+    transition: transform 0.2s;
+}
+
+.proof-toggle.collapsed svg {
+    transform: rotate(-90deg);
+}
+
+/* Proof content — hidden when collapsed */
+.proof-body {
+    overflow: hidden;
+    transition: max-height 0.25s ease, opacity 0.2s ease;
+}
+
+.ltx_proof.collapsed .proof-body {
+    max-height: 0 !important;
+    opacity: 0;
+}
+
+/* Print: always show proofs */
+@media print {
+    .ltx_proof.collapsed .proof-body {
+        max-height: none !important;
+        opacity: 1 !important;
+    }
+
+    .proof-toggle {
+        display: none !important;
+    }
+}

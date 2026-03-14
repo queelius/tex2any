@@ -1,1 +1,0 @@
-"""Theme resources for tex2any."""

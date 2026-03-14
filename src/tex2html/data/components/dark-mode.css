@@ -1,0 +1,173 @@
+/* Dark Mode Component
+ *
+ * Single source of truth for dark theme. Redefines CSS custom properties
+ * under [data-theme="dark"]. Other components stay theme-agnostic —
+ * they just use var(--property, fallback) and get dark mode for free.
+ *
+ * Theme is applied via data-theme attribute on <html>.
+ * JS respects prefers-color-scheme and localStorage override.
+ */
+
+/* Toggle button — fixed bottom-right */
+.dark-mode-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--surface-bg, #fff);
+    border: 1px solid var(--border-color, #d0d0d0);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+    padding: 0;
+    color: var(--text-color, #1a1a1a);
+}
+
+.dark-mode-toggle:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode-toggle:active {
+    transform: scale(0.95);
+}
+
+.dark-mode-toggle:focus-visible {
+    outline: 2px solid var(--link-color, #0066cc);
+    outline-offset: 2px;
+}
+
+.dark-mode-toggle svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+/* Smooth transition on theme change */
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ─── Dark theme variable overrides ─── */
+
+[data-theme="dark"] {
+    --text-color: #e0e0e0;
+    --text-color-muted: #999;
+    --heading-color: #f0f0f0;
+    --bg-color: #1a1a1a;
+    --surface-bg: #242424;
+    --surface-alt-bg: #2e2e2e;
+    --border-color: #3a3a3a;
+    --link-color: #6ba3ff;
+    --link-hover-color: #8ec5ff;
+    --code-bg: #2a2a2a;
+    --code-color: #e0e0e0;
+    --toc-bg: #242424;
+    --toc-border: #3a3a3a;
+    --toc-hover-bg: rgba(107, 163, 255, 0.1);
+    --toc-active-bg: rgba(107, 163, 255, 0.15);
+    --toggle-bg: #242424;
+    --toggle-border: #3a3a3a;
+}
+
+/* Base overrides */
+[data-theme="dark"] body {
+    background: var(--bg-color);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6 {
+    color: var(--heading-color);
+}
+
+[data-theme="dark"] h2 {
+    border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] a {
+    color: var(--link-color);
+}
+
+[data-theme="dark"] a:hover {
+    color: var(--link-hover-color);
+}
+
+/* Code */
+[data-theme="dark"] code,
+[data-theme="dark"] .ltx_verbatim {
+    background: var(--code-bg);
+    color: var(--code-color);
+}
+
+[data-theme="dark"] pre,
+[data-theme="dark"] .ltx_lstlisting {
+    background: var(--code-bg);
+    border-color: var(--border-color);
+}
+
+/* LaTeXML environments */
+[data-theme="dark"] .ltx_abstract,
+[data-theme="dark"] .ltx_theorem,
+[data-theme="dark"] .ltx_proof,
+[data-theme="dark"] .ltx_definition,
+[data-theme="dark"] .ltx_lemma,
+[data-theme="dark"] .ltx_corollary,
+[data-theme="dark"] .ltx_proposition,
+[data-theme="dark"] .ltx_remark,
+[data-theme="dark"] .ltx_example {
+    background: var(--surface-bg);
+}
+
+/* Tables */
+[data-theme="dark"] table th,
+[data-theme="dark"] table td {
+    border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] table th {
+    background: var(--surface-bg);
+    color: var(--heading-color);
+}
+
+[data-theme="dark"] tbody tr:hover {
+    background: var(--surface-alt-bg);
+}
+
+/* Selection */
+[data-theme="dark"] ::selection {
+    background: var(--link-color);
+    color: var(--bg-color);
+}
+
+/* Images — slight brightness reduction to reduce glare */
+[data-theme="dark"] img {
+    opacity: 0.9;
+}
+
+/* Horizontal rules */
+[data-theme="dark"] hr {
+    border-color: var(--border-color);
+}
+
+/* Blockquotes */
+[data-theme="dark"] blockquote {
+    border-left-color: var(--border-color);
+    color: var(--text-color-muted);
+}
+
+/* Print — always light */
+@media print {
+    .dark-mode-toggle {
+        display: none !important;
+    }
+}

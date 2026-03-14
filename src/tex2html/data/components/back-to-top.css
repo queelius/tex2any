@@ -1,0 +1,62 @@
+/* Back to Top Component — fixed scroll-to-top button
+ *
+ * Appears after scrolling 300px. No knowledge of other components.
+ */
+
+.back-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 72px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--surface-bg, #fff);
+    border: 1px solid var(--border-color, #d0d0d0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    padding: 0;
+    color: var(--text-color, #1a1a1a);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity 0.2s, visibility 0.2s, transform 0.2s, background 0.15s;
+}
+
+.back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.back-to-top:hover {
+    background: var(--link-color, #0066cc);
+    border-color: var(--link-color, #0066cc);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.back-to-top:active {
+    transform: scale(0.93);
+}
+
+.back-to-top:focus-visible {
+    outline: 2px solid var(--link-color, #0066cc);
+    outline-offset: 2px;
+}
+
+.back-to-top svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+/* Print: hide */
+@media print {
+    .back-to-top {
+        display: none !important;
+    }
+}

@@ -1,0 +1,132 @@
+/* Floating TOC Component — fixed sidebar navigation
+ *
+ * Scans LaTeXML section elements, builds a clickable TOC,
+ * highlights current section on scroll. Starts collapsed;
+ * toggle button opens/closes.
+ */
+
+.floating-toc {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 260px;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 1.5rem 1rem;
+    background: var(--toc-bg, #f8f8f8);
+    border-right: 1px solid var(--toc-border, #ddd);
+    font-size: 0.88rem;
+    z-index: 900;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.floating-toc.open {
+    transform: translateX(0);
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Toggle button */
+.floating-toc-toggle {
+    position: fixed;
+    left: 12px;
+    top: 12px;
+    z-index: 901;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background: var(--surface-bg, #fff);
+    border: 1px solid var(--border-color, #ddd);
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    transition: background 0.15s, box-shadow 0.15s;
+    color: var(--text-color, #1a1a1a);
+}
+
+.floating-toc-toggle:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.floating-toc-toggle:focus-visible {
+    outline: 2px solid var(--link-color, #0066cc);
+    outline-offset: 2px;
+}
+
+.floating-toc-toggle svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
+/* Title */
+.floating-toc-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-color-muted, #666);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--toc-border, #ddd);
+}
+
+/* List */
+.floating-toc ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.floating-toc li {
+    margin: 1px 0;
+}
+
+/* Nesting via data-depth attribute */
+.floating-toc li[data-depth="2"] { padding-left: 1rem; }
+.floating-toc li[data-depth="3"] { padding-left: 2rem; }
+
+.floating-toc a {
+    display: block;
+    padding: 0.3rem 0.5rem;
+    border-radius: 4px;
+    color: var(--text-color, #333);
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+    line-height: 1.4;
+}
+
+.floating-toc a:hover {
+    background: var(--toc-hover-bg, rgba(0, 102, 204, 0.08));
+    color: var(--link-color, #0066cc);
+}
+
+.floating-toc a.active {
+    background: var(--toc-active-bg, rgba(0, 102, 204, 0.12));
+    color: var(--link-color, #0066cc);
+    font-weight: 500;
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Responsive: smaller toggle on mobile */
+@media (max-width: 768px) {
+    .floating-toc {
+        width: 240px;
+    }
+}
+
+/* Print: hide */
+@media print {
+    .floating-toc,
+    .floating-toc-toggle {
+        display: none !important;
+    }
+}

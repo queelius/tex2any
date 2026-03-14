@@ -1,154 +1,157 @@
-"""Tests for the component system."""
+"""Tests for the filesystem-based component loader."""
 
 import pytest
-from tex2any.components import (
-    Component,
-    COMPONENTS,
-    get_component,
-    list_components,
-    validate_components,
-)
+from pathlib import Path
+
+from tex2html import components
+from tex2html.components import BUILTIN_DIR
 
 
-class TestComponent:
-    """Tests for Component class."""
+class TestAvailable:
+    """Tests for components.available()."""
 
-    def test_get_css_returns_string(self):
-        """Component.get_css() should return a non-empty string."""
-        comp = get_component('toc')
-        css = comp.get_css()
+    def test_returns_sorted_list(self):
+        names = components.available()
+        assert names == sorted(names)
+
+    def test_contains_expected_components(self):
+        names = components.available()
+        expected = {'dark-mode', 'floating-toc', 'back-to-top', 'collapsible-proofs', 'copy-code'}
+        assert expected.issubset(set(names))
+
+    def test_extra_dir_adds_components(self, tmp_path):
+        (tmp_path / "custom.css").write_text("body {}")
+        names = components.available(extra_dir=tmp_path)
+        assert "custom" in names
+
+    def test_extra_dir_merges_with_builtin(self, tmp_path):
+        (tmp_path / "custom.css").write_text("body {}")
+        names = components.available(extra_dir=tmp_path)
+        # Should have both built-in and custom
+        assert "dark-mode" in names
+        assert "custom" in names
+
+    def test_extra_dir_none_is_safe(self):
+        names = components.available(extra_dir=None)
+        assert len(names) > 0
+
+
+class TestLoad:
+    """Tests for components.load()."""
+
+    def test_loads_css(self):
+        css, js = components.load("dark-mode")
         assert isinstance(css, str)
         assert len(css) > 0
 
-    def test_get_js_returns_string_when_required(self):
-        """Component.get_js() should return string when requires_js=True."""
-        comp = get_component('floating-toc')
-        assert comp.requires_js is True
-        js = comp.get_js()
+    def test_loads_js_when_present(self):
+        css, js = components.load("dark-mode")
+        assert js is not None
         assert isinstance(js, str)
         assert len(js) > 0
 
-    def test_all_registered_components_load_css(self):
-        """All registered components should successfully load their CSS."""
-        for name, comp in COMPONENTS.items():
-            css = comp.get_css()
-            assert isinstance(css, str), f"Component {name} failed to load CSS"
-            assert len(css) > 0, f"Component {name} has empty CSS"
+    def test_js_none_when_no_js_file(self, tmp_path):
+        (tmp_path / "css-only.css").write_text("body {}")
+        css, js = components.load("css-only", extra_dir=tmp_path)
+        assert css == "body {}"
+        assert js is None
 
-    def test_all_js_components_load_js(self):
-        """All components with requires_js=True should load their JS."""
-        for name, comp in COMPONENTS.items():
-            if comp.requires_js:
-                js = comp.get_js()
-                assert isinstance(js, str), f"Component {name} failed to load JS"
-                assert len(js) > 0, f"Component {name} has empty JS"
+    def test_raises_for_unknown_component(self):
+        with pytest.raises(ValueError, match="Unknown component"):
+            components.load("nonexistent-component-xyz")
 
+    def test_error_message_lists_available(self):
+        with pytest.raises(ValueError, match="dark-mode"):
+            components.load("nonexistent-component-xyz")
 
-class TestComponentRegistry:
-    """Tests for component registry functions."""
+    def test_rejects_path_traversal(self):
+        with pytest.raises(ValueError, match="Unknown component"):
+            components.load("../../etc/passwd")
 
-    def test_get_component_valid(self):
-        """get_component() should return Component for valid names."""
-        comp = get_component('toc')
-        assert isinstance(comp, Component)
-        assert comp.name == 'toc'
+    def test_rejects_slashes(self):
+        with pytest.raises(ValueError, match="Unknown component"):
+            components.load("some/nested")
 
-    def test_get_component_invalid(self):
-        """get_component() should raise ValueError for invalid names."""
-        with pytest.raises(ValueError) as exc_info:
-            get_component('nonexistent-component')
-        assert 'Unknown component' in str(exc_info.value)
+    def test_all_builtins_load(self):
+        for name in components.available():
+            css, js = components.load(name)
+            assert isinstance(css, str)
+            assert len(css) > 0
 
-    def test_list_components(self):
-        """list_components() should return all registered components."""
-        components = list_components()
-        assert len(components) == len(COMPONENTS)
-        assert all(isinstance(c, Component) for c in components)
+    def test_extra_dir_shadows_builtin(self, tmp_path):
+        (tmp_path / "dark-mode.css").write_text("/* custom dark mode */")
+        css, js = components.load("dark-mode", extra_dir=tmp_path)
+        assert "custom dark mode" in css
+        # JS falls back to builtin since extra dir doesn't have it
+        assert js is not None
 
-    def test_known_components_exist(self):
-        """Expected core components should be in the registry."""
-        expected = ['toc', 'floating-toc', 'search', 'footer', 'sidebar-right']
-        for name in expected:
-            assert name in COMPONENTS, f"Expected component '{name}' not found"
+    def test_extra_dir_js_shadows_too(self, tmp_path):
+        (tmp_path / "dark-mode.css").write_text("/* custom css */")
+        (tmp_path / "dark-mode.js").write_text("// custom js")
+        css, js = components.load("dark-mode", extra_dir=tmp_path)
+        assert "custom css" in css
+        assert "custom js" in js
 
-
-class TestComponentValidation:
-    """Tests for component validation."""
-
-    def test_validate_components_returns_dict(self):
-        """validate_components() should return a dict with expected keys."""
-        result = validate_components()
-        assert isinstance(result, dict)
-        assert 'missing_css' in result
-        assert 'missing_js' in result
-
-    def test_validate_components_empty_when_valid(self):
-        """validate_components() should return empty lists when all valid."""
-        result = validate_components()
-        assert result['missing_css'] == [], f"Missing CSS: {result['missing_css']}"
-        assert result['missing_js'] == [], f"Missing JS: {result['missing_js']}"
+    def test_falls_back_to_builtin(self, tmp_path):
+        # extra_dir exists but doesn't have dark-mode
+        css, js = components.load("dark-mode", extra_dir=tmp_path)
+        assert len(css) > 0  # loaded from built-in
 
 
-class TestComponentLayoutPosition:
-    """Tests for component layout positions."""
+class TestBuiltinComponents:
+    """Tests for the actual built-in component files."""
 
-    def test_layout_positions_are_valid(self):
-        """All layout_position values should be valid or None."""
-        valid_positions = {'left', 'right', 'header', 'footer', None}
-        for name, comp in COMPONENTS.items():
-            assert comp.layout_position in valid_positions, (
-                f"Component {name} has invalid layout_position: {comp.layout_position}"
-            )
+    def test_dark_mode_css_has_theme_variables(self):
+        css, _ = components.load("dark-mode")
+        assert "[data-theme=\"dark\"]" in css
 
+    def test_dark_mode_js_respects_prefers_color_scheme(self):
+        _, js = components.load("dark-mode")
+        assert "prefers-color-scheme" in js
 
-class TestMathPreviewComponent:
-    """Tests for the math-preview component."""
+    def test_dark_mode_js_uses_localstorage(self):
+        _, js = components.load("dark-mode")
+        assert "localStorage" in js
 
-    def test_math_preview_registered(self):
-        """math-preview component should be in the registry."""
-        assert 'math-preview' in COMPONENTS
+    def test_floating_toc_css_is_fixed_position(self):
+        css, _ = components.load("floating-toc")
+        assert "position: fixed" in css
 
-    def test_math_preview_properties(self):
-        """math-preview should have correct properties."""
-        comp = get_component('math-preview')
-        assert comp.name == 'math-preview'
-        assert comp.requires_js is True
-        assert comp.layout_position is None
-        assert comp.html_only is True
+    def test_floating_toc_js_scans_latexml_sections(self):
+        _, js = components.load("floating-toc")
+        assert "ltx_section" in js
 
-    def test_math_preview_loads_css(self):
-        """math-preview should load its CSS file."""
-        comp = get_component('math-preview')
-        css = comp.get_css()
-        assert isinstance(css, str)
-        assert len(css) > 0
-        assert 'tex2any-math-preview' in css
+    def test_back_to_top_css_is_fixed_position(self):
+        css, _ = components.load("back-to-top")
+        assert "position: fixed" in css
 
-    def test_math_preview_loads_js(self):
-        """math-preview should load its JS file."""
-        comp = get_component('math-preview')
-        js = comp.get_js()
-        assert isinstance(js, str)
-        assert len(js) > 0
-        assert 'initMathPreview' in js
+    def test_back_to_top_no_component_coupling(self):
+        css, _ = components.load("back-to-top")
+        assert "theme-toggle" not in css
+        assert "has-theme-toggle" not in css
 
-    def test_math_preview_css_has_dark_mode(self):
-        """math-preview CSS should include dark mode support."""
-        comp = get_component('math-preview')
-        css = comp.get_css()
-        assert 'body[data-theme="dark"]' in css
+    def test_collapsible_proofs_css_has_print_rule(self):
+        css, _ = components.load("collapsible-proofs")
+        assert "@media print" in css
 
-    def test_math_preview_css_has_responsive_styles(self):
-        """math-preview CSS should include responsive styles."""
-        comp = get_component('math-preview')
-        css = comp.get_css()
-        assert '@media' in css
+    def test_collapsible_proofs_js_no_localstorage(self):
+        _, js = components.load("collapsible-proofs")
+        assert "localStorage" not in js
 
-    def test_math_preview_js_handles_equation_selectors(self):
-        """math-preview JS should handle common equation reference patterns."""
-        comp = get_component('math-preview')
-        js = comp.get_js()
-        # Check for expected selectors
-        assert '#eq-' in js
-        assert '#E' in js
-        assert 'ltx_equation' in js
+    def test_copy_code_js_uses_clipboard_api(self):
+        _, js = components.load("copy-code")
+        assert "navigator.clipboard" in js
+
+    def test_copy_code_js_no_execcommand(self):
+        _, js = components.load("copy-code")
+        assert "execCommand" not in js
+
+    def test_no_component_references_data_theme_dark(self):
+        """Only dark-mode should reference [data-theme='dark']. Others use CSS vars."""
+        for name in components.available():
+            if name == "dark-mode":
+                continue
+            css, js = components.load(name)
+            assert 'data-theme="dark"' not in css, f"{name}.css references data-theme"
+            if js:
+                assert 'data-theme="dark"' not in js, f"{name}.js references data-theme"
